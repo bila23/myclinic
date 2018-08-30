@@ -1,0 +1,71 @@
+<!doctype html>
+<html lang="sv">
+<head>{% load static %}
+    <meta charset="utf-8">
+		<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+		<title>My Clinic</title>
+		<link rel='shortcut icon' type='image/x-icon' href='{% static "images/favicon.ico" %}' />
+		<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css" integrity="sha384-MCw98/SFnGE8fJT3GXwEOngsV7Zt27NXFoaoApmYm81iuXoPkFOJwJ8ERdknLPMO" crossorigin="anonymous">
+	<style>
+		body{background: #333 url('{% static "images/2.jpg" %}') no-repeat top center fixed; background-size: cover}
+		.form-signin {
+			width: 100%;
+			max-width: 410px;
+			margin: auto;
+			position:fixed;
+			top:50%;
+			left:50%;
+			margin-top: -155px;
+    		margin-left: -187.5px;
+		  }
+		  .form-signin .checkbox {
+			font-weight: 400;
+		  }
+		  .form-signin .form-control {
+			box-sizing: border-box;
+			height: auto;
+			padding: 10px;
+			font-size: 16px;
+		  }
+		  .form-signin .form-control:focus {
+			z-index: 2;
+		  }
+		  .form-signin input[type="text"] {
+			margin-bottom: -1px;
+			border-bottom-right-radius: 0;
+			border-bottom-left-radius: 0;
+		  }
+		  .form-signin input[type="password"] {
+			margin-bottom: 10px;
+			border-top-left-radius: 0;
+			border-top-right-radius: 0;
+		  }
+	</style>
+</head>
+<body class="text-center">
+	<form class="form-signin" method="POST">
+			{% csrf_token %}
+		<div style="background: rgba(255,255,255,0.7);padding:30px 40px;border-radius:3px;position:relative">
+			<h1 class="h3 mb-3 font-weight-normal" style="color:#4e699a">My Clinic</h1>
+			<label for="usr" class="sr-only">Usuario</label>
+			<input type="text" id="id_username" name="username" class="form-control" placeholder="Usuario" required autofocus>
+			<label for="pwd" class="sr-only">Contraseña</label>
+			<input type="password" id="id_password" name="password" class="form-control" placeholder="Contraseña" required>
+			<div class="checkbox mb-3">
+				<label>
+				<input type="checkbox" value="remember-me"> Remember me
+				</label>
+			</div>
+			{% if form.errors %}
+				<p style="color:red">Usuario y/o contrase&ntilde;a incorrecta</p>
+			{% endif %}
+			<input type="hidden" value="{{next}}" name="next"/>
+			<button class="btn btn-lg btn-primary btn-block" type="submit">Ingresar</button>
+		</div>
+	</form>
+	<script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js" integrity="sha384-ZMP7rVo3mIykV+2+9J3UJ46jBk0WLaUAdn689aCwoqbBJiSnjAK/l8WvCWPIPm49" crossorigin="anonymous"></script>
+	<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/js/bootstrap.min.js" integrity="sha384-ChfqqxuZUCnJSK3+MXmPNIyE6ZbWh2IMqE241rYiqJxyMiZ6OW/JmZQ5stwEULTy" crossorigin="anonymous"></script>
+</body>
+</html>
