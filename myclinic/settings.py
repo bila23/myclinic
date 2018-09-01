@@ -29,6 +29,7 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'horario.apps.HorarioConfig',
     'compressor', #http://django-compressor.readthedocs.io/en/latest/quickstart/
 
 ]
@@ -133,7 +134,7 @@ STATICFILES_FINDERS = (
     'compressor.finders.CompressorFinder',
 )
 
-LOGIN_REDIRECT_URL = 'home'
+LOGIN_REDIRECT_URL = '/horario/consulta/'
 LOGOUT_REDIRECT_URL = 'login'
 
 SILENCED_SYSTEM_CHECKS = [

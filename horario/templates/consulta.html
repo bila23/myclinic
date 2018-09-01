@@ -1,0 +1,39 @@
+{% extends 'base.html' %}
+{% block content %}
+<style>
+    table.table th{background-color: #27729f; color:#fff}
+</style>
+<div class="row">
+    <div class="col-2 offset-10">
+        <input type="date" class="form-control"/>
+    </div>
+</div>
+<div class="row">
+    <div class="col">
+        <div class="table-responsive">
+        <table class="table table-bordered table-hover">
+            <thead>
+            <tr>
+                <th scope="col">Horario</th>
+                <th scope="col">Paciente</th>
+                <th scope="col"></th>
+            </tr>
+            </thead>
+            <tbody style="background:#fff">
+            {%if horario_list%}
+            {% for h in horario_list %}
+                <tr>
+                <td>{{ h.id_horario.inicio }} - {{ h.id_horario.fin }}</td>
+                <td>{{ h.id_paciente.nombre }}</td>
+                <td class="text-center">[Ir a consulta]</td>
+                </tr>
+            {%endfor%}
+            {% else %}
+                <tr><td colspan="3" class="text-center">No hay citas para este d&iacute;a</td></tr>
+            {%endif%}
+            </tbody>
+        </table>
+        </div>
+    </div>
+</div>
+{% endblock %}
