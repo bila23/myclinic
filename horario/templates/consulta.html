@@ -1,11 +1,15 @@
 {% extends 'base.html' %}
 {% block content %}
-<style>
-    table.table th{background-color: #27729f; color:#fff}
-</style>
-<div class="row">
-    <div class="col-2 offset-10">
-        <input type="date" class="form-control"/>
+{% load compress %}
+<div class="row align-items-center">
+    <div class="col-md-4 col-sm-12">
+        <button type="submit" class="btn-g">Nuevo paciente</button>
+        <button type="submit" class="btn-g">Nueva cita</button>
+    </div>
+    <div class="col-md-8" style="text-align: right">
+        Fecha de consulta:
+        <input type="text" class="fc text-center" id="ini" placeholder="dd/mm/yyyy" value="{{day}}" style="margin-left:5px"/>
+        <button type="submit" class="btn-g">Buscar</button>
     </div>
 </div>
 <div class="row">
@@ -36,4 +40,10 @@
         </div>
     </div>
 </div>
+{% endblock %}
+{% block javascript %}
+    {% compress js inline%}
+        <script>
+        </script>
+    {% endcompress %}
 {% endblock %}
