@@ -12,7 +12,7 @@ nombre del usuario, no el objeto
 '''
 def findUserName(username):
     try:
-        user = Usuario.objects.get(pk = username.upper())
+        user = Usuario.objects.get(id = username.upper())
         if(user.id_rol.id == 1):
             return username
         else:
@@ -28,10 +28,36 @@ con referencia al usuario
 '''    
 def findUser(username):
     try:
-        user = Usuario.objects.get(pk = username.upper())
+        user = Usuario.objects.get(id = username)
         if(user.id_rol.id == 1):
             return user
         else:
             return user.id_usuario
     except Exception as ex:
         raise (ex)
+
+'''
+retorna la fecha que paso como parametro en formato dd/mm/yyyy en un string
+'''
+def dateToString(date):
+    if not date:
+        return ''
+    today_string = ''
+    if(date.day < 10):
+        today_string = '0' + str(date.day - 1)
+    else:
+        today_string = str(date.day)
+    if(date.month < 10):
+        today_string = today_string + '/0' + str(date.month)
+    else:
+        today_string = today_string + '/' + str(date.month)
+    today_string = today_string + '/' + str(date.year)
+    return today_string
+
+'''
+Funcion que pasa un string que posee una fecha en formato DD/MM/YYYY
+a string con formato YYYY-MM-DD
+'''
+def toformat_YYYYMMDD(date):
+    day,month,year = date.split('/')
+    return str(year) + '-' + str(month) + '-' + day

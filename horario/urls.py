@@ -4,4 +4,5 @@ from django.conf.urls import url
 
 urlpatterns = [
     url('horario/consulta/', views.home, name="horario_consulta"),
+    url('horario/find/q/', views.find_consulta, name='horario_consulta_query'),
 ]

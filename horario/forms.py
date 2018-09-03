@@ -1,4 +1,4 @@
 from django import forms
 
 class HorConsultaForm(forms.Form):
-    date = forms.DateField()
+    vdate = forms.CharField(max_length=10)
