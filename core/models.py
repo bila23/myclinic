@@ -62,8 +62,13 @@ class MedicoEspecialidad(models.Model):
         db_table = 'medico_especialidad'
         unique_together = (('id_especialidad', 'id_usuario'),)
 
+class PacienteManager(models.Manager):
+    def get_by_natural_key(nombre):
+        return self.get(nombre=nombre)
 
 class Paciente(models.Model):
+    objects = PacienteManager()
+
     nombre = models.CharField(max_length=3000, blank=True, null=True)
     fecha_nac = models.DateField(blank=True, null=True)
     sexo = models.CharField(max_length=1, blank=True, null=True)
@@ -82,6 +87,9 @@ class Paciente(models.Model):
     empresa = models.CharField(max_length=2000, blank=True, null=True)
     direccion_empresa = models.CharField(max_length=4000, blank=True, null=True)
     municipio = models.CharField(max_length=3, blank=True, null=True)
+
+    def natural_key(self):
+        return (self.nombre)
 
     class Meta:
         managed = False
@@ -340,14 +348,22 @@ class ExamenesDiag(models.Model):
         db_table = 'examenes_diag'
         unique_together = (('id_medico', 'id_consulta', 'id_exa'),)
 
+class HorariosManager(models.Manager):
+    def get_by_natural_key(self, inicio, fin):
+        return self.get(inicio = inicio, fin = fin)
 
 class Horarios(models.Model):
+    objects = HorariosManager()
+
     dia = models.IntegerField(blank=True, null=True)
     inicio = models.TimeField(blank=True, null=True)
     fin = models.TimeField(blank=True, null=True)
     id_medico = models.ForeignKey('Usuario', models.DO_NOTHING, db_column='id_medico', blank=True, null=True)
     usuario_crea = models.CharField(max_length=15, blank=True, null=True)
     fec_crea = models.DateTimeField(blank=True, null=True)
+
+    def natural_key(self):
+        return (self.inicio, self.fin)
 
     class Meta:
         managed = False

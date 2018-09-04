@@ -12,7 +12,7 @@ nombre del usuario, no el objeto
 '''
 def findUserName(username):
     try:
-        user = Usuario.objects.get(id = username.upper())
+        user = Usuario.objects.get(id = username)
         if(user.id_rol.id == 1):
             return username
         else:
@@ -59,5 +59,9 @@ Funcion que pasa un string que posee una fecha en formato DD/MM/YYYY
 a string con formato YYYY-MM-DD
 '''
 def toformat_YYYYMMDD(date):
+    if not date:
+        return ''
+    if '/' not in date:
+        return ''
     day,month,year = date.split('/')
     return str(year) + '-' + str(month) + '-' + day

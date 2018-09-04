@@ -50,8 +50,26 @@
 </form>
 {% endblock %}
 {% block javascript %}
-    
+{% compress js inline%}
 <script>
+    $(function() {
+        $.ajax({
+            type: 'POST',
+            url: '{% url 'horario_cons_today' %}',
+            data: {
+                csrfmiddlewaretoken: '{{ csrf_token }}'
+            },
+            dataType: 'json'
+        }).done(function (data) {
+            r = $.parseJSON(data);
+            $.each(r, function(i, item){
+                var $tr = $('<tr>').append(
+                    $('<td>').text(item)
+                );
+            });
+        });        
+    });
+
     $(document).ready(function () {
         $('#mf').submit(function (event) {
             $.ajax({
@@ -65,4 +83,5 @@
         });
     });
 </script>
+{% endcompress %}
 {% endblock %}
