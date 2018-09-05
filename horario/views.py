@@ -39,7 +39,7 @@ def find_consulta(request):
         if (request.method == "POST" and request.is_ajax()):
             form = HorConsultaForm(request.POST)
             horario_list = HorariosOcupados.objects.filter(id_medico = gf.findUser(request.user.username), fecha = gf.toformat_YYYYMMDD(form.data['vdate']))
-            data = serializers.serialize('json', horario_list, indent=2, use_natural_foreign_keys=True, use_natural_primary_keys=True)
+            data = serializers.serialize('json', horario_list, indent=1, use_natural_foreign_keys=True, use_natural_primary_keys=True)
             return JsonResponse(data, safe=False)
             #return HttpResponse(horario_list)
     except Exception as inst:

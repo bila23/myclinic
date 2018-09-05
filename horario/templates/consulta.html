@@ -4,8 +4,9 @@
 <form method="POST" id="mf" action="{% url 'horario_consulta_query' %}">
     {% csrf_token %}
     <div id="msg" style="color:red"></div>
+    <div id="wng"></div>
     {% if error_msg %}
-        <div style="color:red">{{error_msg}}</div>
+        <div class="alert alert-danger">{{error_msg}}</div>
     {% endif %}
     <div class="row align-items-center">
         <div class="col-md-4 col-sm-12">
@@ -15,7 +16,7 @@
         <div class="col-md-8" style="text-align: right">
             Fecha de consulta:
             <input type="text" class="fc text-center" id="id_vdate" name="vdate" placeholder="dd/mm/yyyy" value="{{ day }}" style="margin-left:5px"/>
-            <button type="submit" id="qb" class="btn-g">Buscar</button>
+            <button type="button" id="qb" class="btn-g">Buscar</button>
         </div>
     </div>
     <div class="row">
@@ -29,24 +30,12 @@
                     <th scope="col"></th>
                 </tr>
                 </thead>
-                <tbody style="background:#fff">
-                {%if horario_list%}
-                {% for h in horario_list %}
-                    <tr>
-                    <td>{{ h.id_horario.inicio }} - {{ h.id_horario.fin }}</td>
-                    <td>{{ h.id_paciente.nombre }}</td>
-                    <td class="text-center">[Ir a consulta]</td>
-                    </tr>
-                {%endfor%}
-                {% else %}
-                    <tr><td colspan="3" class="text-center">No hay citas para este d&iacute;a</td></tr>
-                {%endif%}
+                <tbody style="background:#fff" id="tb">
                 </tbody>
             </table>
             </div>
         </div>
     </div>
-    <div id="a"></div>
 </form>
 {% endblock %}
 {% block javascript %}
@@ -61,27 +50,60 @@
             },
             dataType: 'json'
         }).done(function (data) {
-            r = $.parseJSON(data);
-            $.each(r, function(i, item){
-                var $tr = $('<tr>').append(
-                    $('<td>').text(item)
-                );
-            });
+            getTbody(data);
         });        
     });
 
+    function getTbody(data){
+        row = jQuery.parseJSON(data);
+        $('#tb').empty();
+        var tr = '';
+        var size = row.length;
+        if(size > 0){
+            var t;
+            for(i=0; i<size; i++){
+                t = String(row[i].fields.id_horario).split(',');
+                tr += '<tr><td>' +  t[0].substring(0, 5) + ' - ' + t[1].substring(0, 5) + '</td><td>' + row[i].fields.id_paciente + '</td><td class="text-center">[Ir a consulta]</td></tr>';
+            }
+        }else
+            tr = '<tr><td colspan="3" class="text-center">No hay citas para este d&iacute;a</td></tr>'; 
+        $('#tb').html(tr);
+    }
+
     $(document).ready(function () {
-        $('#mf').submit(function (event) {
-            $.ajax({
-                type: 'POST',
-                url: '{% url 'horario_consulta_query' %}',
-                data: $('#mf').serialize()
-            }).done(function (data) {
-                alert(data);
-            });
-            event.preventDefault();
+        $('#qb').click(function (event) {
+            flag = validate();
+            if(flag){
+                $.ajax({
+                    type: 'POST',
+                    url: '{% url 'horario_consulta_query' %}',
+                    data: $('#mf').serialize(),
+                    dataType: 'json'
+                }).done(function (data) {
+                    getTbody(data);
+                });
+            }
         });
     });
+
+    function validate(){
+        $('#wng').empty().removeClass('alert alert-warning');
+        var d = $('#id_vdate').val();
+        if(d == ''){
+            $('#wng').addClass('alert alert-warning');
+            $('#wng').empty().append('El campo fecha esta vacio, debe ingresar una fecha valida (formato DD/MM/YYYY)');
+            return false;
+        }
+        if(isDate(d))
+            return true;
+        else{
+            $('#wng').addClass('alert alert-warning');
+            $('#wng').empty().append('El formato de la fecha es incorrecto, debe ser DD/MM/YYYY');
+            return false;
+        }
+        return true;
+    }
+    
 </script>
 {% endcompress %}
 {% endblock %}
