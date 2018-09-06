@@ -11,7 +11,7 @@
     <div class="row align-items-center">
         <div class="col-md-4 col-sm-12">
             <button type="submit" class="btn-g">Nuevo paciente</button>
-            <button type="submit" class="btn-g">Nueva cita</button>
+            <button type="button" class="btn-g" onclick="location.href='{% url 'today_nueva_cita' %}'">Nueva cita</button>
         </div>
         <div class="col-md-8" style="text-align: right">
             Fecha de consulta:
@@ -50,9 +50,17 @@
             },
             dataType: 'json'
         }).done(function (data) {
-            getTbody(data);
+            data_or_error(data);
         });        
     });
+
+    function data_or_error(data){
+        if(!$.isEmptyObject(data.error_msg)){
+            $('#wng').addClass('alert alert-danger');
+            $('#wng').empty().append(data.error_msg);
+        }else
+            getTbody(data);
+    }
 
     function getTbody(data){
         row = jQuery.parseJSON(data);
@@ -80,7 +88,7 @@
                     data: $('#mf').serialize(),
                     dataType: 'json'
                 }).done(function (data) {
-                    getTbody(data);
+                    data_or_error(data);
                 });
             }
         });

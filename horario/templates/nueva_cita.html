@@ -1,0 +1,14 @@
+{% extends 'base.html' %}
+{% block content %}
+<form method="POST" id="mf">
+    {% csrf_token %}
+    {% for pac in pac_list %}
+        {{pac.nombre}}<br/>
+    {% endfor %}
+    {% for hor in hor_list %}
+        {{hor.fin}} - {{hor.inicio}}<br/>
+    {% endfor %}
+</form>
+{% endblock %}
+{% block javascript %}
+{% endblock %}

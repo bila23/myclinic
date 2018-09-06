@@ -1,13 +1,12 @@
 from django.shortcuts import render
 from django.contrib.auth.decorators import login_required
-from core.models import HorariosOcupados
+from core.models import HorariosOcupados, Paciente, Horarios
 from django.http import JsonResponse
 import core.generalFunction as gf
 from core.models import Usuario
 import datetime
 from .forms import HorConsultaForm
 from django.core import serializers
-from django.http import HttpResponse
 
 @login_required
 def home(request):
@@ -17,20 +16,19 @@ def home(request):
         return render(request, 'consulta.html', {'day': today_string})
     except Exception as inst:
         print(inst)
-        return render(request, 'consulta.html',{
-            'error_msg': 'Ha ocurrido un error al momento de recuperar los pacientes de este día'
-        })
+        return JsonResponse({'error_msg': 'Ha ocurrido un error al momento de recuperar los pacientes de este día'}, safe=False)
 
 
 @login_required
 def show_today(request):
     try:
         today = datetime.datetime.today()
-        horario_list = HorariosOcupados.objects.filter(id_medico = gf.findUser(request.user.username), fecha = today)
+        horario_list = HorariosOcupados.objects.filter(id_medico = gf.findUser(request.user.username), fecha = today).order_by('id_horario')
         data = serializers.serialize('json', horario_list)
         return JsonResponse(data, safe=False)
-    except Exception as inst:
-        print (inst)
+    except Exception as e:
+        print(e)
+        return JsonResponse({'error_msg': 'Ha ocurrido un error al momento de recuperar los pacientes de este día'}, safe=False)
 
 
 @login_required
@@ -38,10 +36,23 @@ def find_consulta(request):
     try:
         if (request.method == "POST" and request.is_ajax()):
             form = HorConsultaForm(request.POST)
-            horario_list = HorariosOcupados.objects.filter(id_medico = gf.findUser(request.user.username), fecha = gf.toformat_YYYYMMDD(form.data['vdate']))
+            horario_list = HorariosOcupados.objects.filter(id_medico = gf.findUser(request.user.username), fecha = gf.toformat_YYYYMMDD(form.data['vdate'])).order_by('id_horario')
             data = serializers.serialize('json', horario_list, indent=1, use_natural_foreign_keys=True, use_natural_primary_keys=True)
             return JsonResponse(data, safe=False)
-            #return HttpResponse(horario_list)
     except Exception as inst:
         print(inst)
-        return JsonResponse({'msg': 'Ha ocurrido un error al momento de recuperar los pacientes'}, safe=False)
+        return JsonResponse({'error_msg': 'Ha ocurrido un error al momento de recuperar los pacientes'}, safe=False)
+
+@login_required
+def nueva_cita_today(request):
+    try:
+        today = datetime.datetime.today()
+        #RECUPERO LOS HORARIOS DISPONIBLES
+        hor_list = Horarios.objects.filter(id_medico = gf.findUser(request.user.username)).exclude(id__in = HorariosOcupados.objects.filter(id_medico = gf.findUser(request.user.username), fecha = today) ).order_by('inicio')
+        #RECUPERO LOS PACIENTES DEL MEDICO
+        pac_list = Paciente.objects.filter(id_medico = gf.findUser(request.user.username)).order_by('nombre')
+        context = {'hor_list': hor_list, 'pac_list': pac_list, 'today': today}
+        return render(request, 'nueva_cita.html', context)
+    except Exception as e:
+        print(e)
+        return render(request, 'nueva_cita.html')

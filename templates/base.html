@@ -243,9 +243,15 @@
             </div>
             <ul class="list-unstyled components">
                 <li class="active">
-                    <a href="#home" data-toggle="collapse" aria-expanded="false" class="dropdown-toggle">
+                    <a href="{% url 'horario_consulta' %}">
                         <i class="fas fa-home"></i>
-                        Home
+                        Inicio
+                    </a>
+                </li>
+                <li>
+                    <a href="#home" data-toggle="collapse" aria-expanded="false" class="dropdown-toggle">
+                        <i class="fas fa-briefcase"></i>
+                        About
                     </a>
                     <ul class="collapse list-unstyled" id="home">
                         <li>
@@ -258,12 +264,6 @@
                             <a href="#">Home 3</a>
                         </li>
                     </ul>
-                </li>
-                <li>
-                    <a href="#">
-                        <i class="fas fa-briefcase"></i>
-                        About
-                    </a>
                 </li>
                 <li>
                     <a href="#">
