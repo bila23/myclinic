@@ -50,7 +50,7 @@
             },
             dataType: 'json'
         }).done(function (data) {
-            data_or_error(data);
+            data_or_error(data.horario_list);
         });        
     });
 
@@ -88,7 +88,7 @@
                     data: $('#mf').serialize(),
                     dataType: 'json'
                 }).done(function (data) {
-                    data_or_error(data);
+                    data_or_error(data.horario_list);
                 });
             }
         });
