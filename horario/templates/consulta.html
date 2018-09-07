@@ -6,7 +6,7 @@
     <div id="msg" style="color:red"></div>
     <div id="wng"></div>
     {% if error_msg %}
-        <div class="alert alert-danger">{{error_msg}}</div>
+    <div class="alert alert-danger">{{error_msg}}</div>
     {% endif %}
     <div class="row align-items-center">
         <div class="col-md-4 col-sm-12">
@@ -14,7 +14,8 @@
         </div>
         <div class="col-md-8" style="text-align: right">
             Fecha de consulta:
-            <input type="text" class="fc text-center" id="id_vdate" name="vdate" placeholder="dd/mm/yyyy" value="{{ day }}" style="margin-left:5px"/>
+            <input type="text" class="fc text-center" id="id_vdate" name="vdate" placeholder="dd/mm/yyyy" value="{{ day }}"
+                style="margin-left:5px" />
             <button type="button" id="qb" class="btn-g">Buscar</button>
         </div>
     </div>
@@ -26,21 +27,21 @@
     <div class="row">
         <div class="col">
             <div class="table-responsive">
-            <table class="table table-bordered table-hover">
-                <thead>
-                <tr>
-                    <th scope="col">Horario</th>
-                    <th scope="col">Paciente</th>
-                    <th scope="col"></th>
-                </tr>
-                </thead>
-                <tbody style="background:#fff" id="tb">
-                </tbody>
-            </table>
+                <table class="table table-bordered table-hover">
+                    <thead>
+                        <tr>
+                            <th scope="col">Horario</th>
+                            <th scope="col">Paciente</th>
+                            <th scope="col"></th>
+                        </tr>
+                    </thead>
+                    <tbody style="background:#fff" id="tb">
+                    </tbody>
+                </table>
             </div>
         </div>
     </div>
-    <br/><br/>
+    <br /><br />
     <div class="row">
         <div class="col">
             <h5>Horarios disponibles</h5>
@@ -49,16 +50,35 @@
     <div class="row">
         <div class="col">
             <div class="table-responsive">
-            <table class="table table-bordered table-hover">
-                <thead>
-                <tr>
-                    <th scope="col">Horario</th>
-                    <th scope="col"></th>
-                </tr>
-                </thead>
-                <tbody style="background:#fff" id="tbd">
-                </tbody>
-            </table>
+                <table class="table table-bordered table-hover">
+                    <thead>
+                        <tr>
+                            <th scope="col">Horario</th>
+                            <th scope="col"></th>
+                        </tr>
+                    </thead>
+                    <tbody style="background:#fff" id="tbd">
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+    <div class="modal fade" id="mnp" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalCenterTitle">Modal title</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    asdfsdaf
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                    <button type="button" class="btn btn-primary">Save changes</button>
+                </div>
             </div>
         </div>
     </div>
@@ -67,7 +87,7 @@
 {% block javascript %}
 {% compress js inline%}
 <script>
-    $(function() {
+    $(function () {
         $.ajax({
             type: 'POST',
             url: '{% url 'horario_cons_today' %}',
@@ -78,62 +98,68 @@
         }).done(function (data) {
             data_or_error(data.horario_list);
             data_or_error_disp(data.dispo_hor_list);
-        });        
+        });
     });
 
-    function data_or_error(data){
-        if(!$.isEmptyObject(data.error_msg)){
+    function data_or_error(data) {
+        if (!$.isEmptyObject(data.error_msg)) {
             $('#wng').addClass('alert alert-danger');
             $('#wng').empty().append(data.error_msg);
-        }else
+        } else
             getTbody(data);
     }
 
-    function data_or_error_disp(data){
-        if(!$.isEmptyObject(data.error_msg)){
+    function data_or_error_disp(data) {
+        if (!$.isEmptyObject(data.error_msg)) {
             $('#wng').addClass('alert alert-danger');
             $('#wng').empty().append(data.error_msg);
-        }else
+        } else
             getTbodyDisp(data);
     }
 
-    function getTbodyDisp(data){
+    function sm(i){
+        document.getElementById('mnp').id = 'mnp' + i;
+        $('#mnp' + i).modal();
+        document.getElementById('mnp' + i).id = 'mnp';
+    }
+
+    function getTbodyDisp(data) {
         row = jQuery.parseJSON(data);
         $('#tbd').empty();
-        var tr = '';
+        var tr = ''
         var size = row.length;
-        if(size > 0){
+        if (size > 0) {
             var ini, end;
-            for(i=0; i<size; i++){
+            for (i = 0; i < size; i++) {
                 ini = String(row[i].fields.inicio).split(',');
                 end = String(row[i].fields.fin).split(',');
-                tr += '<tr><td>' + ini[0].substring(0, 5) + ' - ' + end[0].substring(0, 5) + '</td><td class="text-center">[Agregar paciente]</td></tr>';
+                tr += '<tr><td>' + ini[0].substring(0, 5) + ' - ' + end[0].substring(0, 5) + '</td><td class="text-center"><a href="javascript:sm(str('+i+'))">[Agregar paciente]</a></td></tr>';
             }
-        }else
-            tr = '<tr><td colspan="2" class="text-center">No hay cupos disponibles</td></tr>'; 
+        } else
+            tr = '<tr><td colspan="2" class="text-center">No hay cupos disponibles</td></tr>';
         $('#tbd').html(tr);
     }
 
-    function getTbody(data){
+    function getTbody(data) {
         row = jQuery.parseJSON(data);
         $('#tb').empty();
         var tr = '';
         var size = row.length;
-        if(size > 0){
+        if (size > 0) {
             var t;
-            for(i=0; i<size; i++){
+            for (i = 0; i < size; i++) {
                 t = String(row[i].fields.id_horario).split(',');
-                tr += '<tr><td>' +  t[0].substring(0, 5) + ' - ' + t[1].substring(0, 5) + '</td><td>' + row[i].fields.id_paciente + '</td><td class="text-center">[Ir a consulta]</td></tr>';
+                tr += '<tr><td>' + t[0].substring(0, 5) + ' - ' + t[1].substring(0, 5) + '</td><td>' + row[i].fields.id_paciente + '</td><td class="text-center">[Ir a consulta]</td></tr>';
             }
-        }else
-            tr = '<tr><td colspan="3" class="text-center">No hay citas para este d&iacute;a</td></tr>'; 
+        } else
+            tr = '<tr><td colspan="3" class="text-center">No hay citas para este d&iacute;a</td></tr>';
         $('#tb').html(tr);
     }
 
     $(document).ready(function () {
         $('#qb').click(function (event) {
             flag = validate();
-            if(flag){
+            if (flag) {
                 $.ajax({
                     type: 'POST',
                     url: '{% url 'horario_consulta_query' %}',
@@ -147,24 +173,24 @@
         });
     });
 
-    function validate(){
+    function validate() {
         $('#wng').empty().removeClass('alert alert-warning');
         var d = $('#id_vdate').val();
-        if(d == ''){
+        if (d == '') {
             $('#wng').addClass('alert alert-warning');
             $('#wng').empty().append('El campo fecha esta vacio, debe ingresar una fecha valida (formato DD/MM/YYYY)');
             return false;
         }
-        if(isDate(d))
+        if (isDate(d))
             return true;
-        else{
+        else {
             $('#wng').addClass('alert alert-warning');
             $('#wng').empty().append('El formato de la fecha es incorrecto, debe ser DD/MM/YYYY');
             return false;
         }
         return true;
     }
-    
+
 </script>
 {% endcompress %}
 {% endblock %}
