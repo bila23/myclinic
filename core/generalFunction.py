@@ -3,6 +3,8 @@ Created on Apr 13, 2018
 @author: wjuarez
 '''
 from .models import Usuario
+from datetime import datetime
+from datetime import timedelta
 
 
 ''''
@@ -65,3 +67,9 @@ def toformat_YYYYMMDD(date):
         return ''
     day,month,year = date.split('/')
     return str(year) + '-' + str(month) + '-' + day
+
+'''
+Funcion que retorna el dia actual en objeto de tipo Date
+'''
+def getToday():
+    return datetime.now() + timedelta(days=1)

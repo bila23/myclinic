@@ -11,12 +11,16 @@
     <div class="row align-items-center">
         <div class="col-md-4 col-sm-12">
             <button type="submit" class="btn-g">Nuevo paciente</button>
-            <button type="button" class="btn-g" onclick="location.href='{% url 'today_nueva_cita' %}'">Nueva cita</button>
         </div>
         <div class="col-md-8" style="text-align: right">
             Fecha de consulta:
             <input type="text" class="fc text-center" id="id_vdate" name="vdate" placeholder="dd/mm/yyyy" value="{{ day }}" style="margin-left:5px"/>
             <button type="button" id="qb" class="btn-g">Buscar</button>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col">
+            <h5>Horarios de Consulta</h5>
         </div>
     </div>
     <div class="row">
@@ -31,6 +35,28 @@
                 </tr>
                 </thead>
                 <tbody style="background:#fff" id="tb">
+                </tbody>
+            </table>
+            </div>
+        </div>
+    </div>
+    <br/><br/>
+    <div class="row">
+        <div class="col">
+            <h5>Horarios disponibles</h5>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col">
+            <div class="table-responsive">
+            <table class="table table-bordered table-hover">
+                <thead>
+                <tr>
+                    <th scope="col">Horario</th>
+                    <th scope="col"></th>
+                </tr>
+                </thead>
+                <tbody style="background:#fff" id="tbd">
                 </tbody>
             </table>
             </div>
@@ -51,6 +77,7 @@
             dataType: 'json'
         }).done(function (data) {
             data_or_error(data.horario_list);
+            data_or_error_disp(data.dispo_hor_list);
         });        
     });
 
@@ -60,6 +87,31 @@
             $('#wng').empty().append(data.error_msg);
         }else
             getTbody(data);
+    }
+
+    function data_or_error_disp(data){
+        if(!$.isEmptyObject(data.error_msg)){
+            $('#wng').addClass('alert alert-danger');
+            $('#wng').empty().append(data.error_msg);
+        }else
+            getTbodyDisp(data);
+    }
+
+    function getTbodyDisp(data){
+        row = jQuery.parseJSON(data);
+        $('#tbd').empty();
+        var tr = '';
+        var size = row.length;
+        if(size > 0){
+            var ini, end;
+            for(i=0; i<size; i++){
+                ini = String(row[i].fields.inicio).split(',');
+                end = String(row[i].fields.fin).split(',');
+                tr += '<tr><td>' + ini[0].substring(0, 5) + ' - ' + end[0].substring(0, 5) + '</td><td class="text-center">[Agregar paciente]</td></tr>';
+            }
+        }else
+            tr = '<tr><td colspan="2" class="text-center">No hay cupos disponibles</td></tr>'; 
+        $('#tbd').html(tr);
     }
 
     function getTbody(data){
@@ -89,6 +141,7 @@
                     dataType: 'json'
                 }).done(function (data) {
                     data_or_error(data.horario_list);
+                    data_or_error_disp(data.dispo_hor_list);
                 });
             }
         });
