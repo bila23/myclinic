@@ -72,4 +72,9 @@ def toformat_YYYYMMDD(date):
 Funcion que retorna el dia actual en objeto de tipo Date
 '''
 def getToday():
-    return datetime.now() + timedelta(days=1)
+    return datetime.now()
+
+def stringToDate(date):
+    if not date:
+        return None
+    return datetime.strptime(date, "%Y-%m-%d").date()

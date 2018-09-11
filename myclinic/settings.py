@@ -49,12 +49,12 @@ MIDDLEWARE = [
 ROOT_URLCONF = 'myclinic.urls'
 
 #INSTALL IN PRODUCTION https://github.com/cobrateam/django-htmlmin
-HTML_MINIFY = False
+HTML_MINIFY = True
 
 #INSTALL IN PRODUCTION http://django-compressor.readthedocs.io/en/latest/quickstart/
 #pip install django_compressor
 COMPRESS_ROOT = ''
-COMPRESS_ENABLED = False
+COMPRESS_ENABLED = True
 
 TEMPLATES = [
     {
@@ -120,7 +120,7 @@ USE_I18N = True
 
 USE_L10N = True
 
-USE_TZ = True
+USE_TZ = False
 
 
 # Static files (CSS, JavaScript, Images)

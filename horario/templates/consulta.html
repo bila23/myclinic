@@ -21,7 +21,7 @@
     </div>
     <div class="row">
         <div class="col">
-            <h5>Horarios de Consulta</h5>
+            <h5>Horarios de consulta reservados</h5>
         </div>
     </div>
     <div class="row">
@@ -32,6 +32,7 @@
                         <tr>
                             <th scope="col">Horario</th>
                             <th scope="col">Paciente</th>
+                            <th scope="col">Estado</th>
                             <th scope="col"></th>
                         </tr>
                     </thead>
@@ -63,21 +64,28 @@
             </div>
         </div>
     </div>
-    <div class="modal fade" id="mnp" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+    <div class="modal fade" id="mnp" tabindex="-1" role="dialog" aria-labelledby="tp" aria-hidden="true">
         <div class="modal-dialog modal-dialog-centered" role="document">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title" id="exampleModalCenterTitle">Modal title</h5>
+                    <div class="modal-title" id="tp" style="font-weight:bold"></div>
                     <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                         <span aria-hidden="true">&times;</span>
                     </button>
                 </div>
                 <div class="modal-body">
-                    asdfsdaf
+                    <select id="psl" class="form-control">
+                        {% if pac_list %}
+                            {% for p in pac_list %}
+                                <option value="{{p.id}}">{{p.nombre}}</option>
+                            {% endfor %}
+                        {% endif %}
+                    </select>
                 </div>
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                    <button type="button" class="btn btn-primary">Save changes</button>
+                    <input type="hidden" id="id_hor"/>
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
+                    <button type="button" class="btn btn-primary" onclick="spo()">Guardar</button>
                 </div>
             </div>
         </div>
@@ -87,6 +95,36 @@
 {% block javascript %}
 {% compress js inline%}
 <script>
+    function spo(){
+        var id_hor = $('#id_hor').val();
+        var id_pac = $('#psl').val();
+        var vdate = $('#id_vdate').val();
+        flag = validate();
+        if(flag){
+            $.ajax({
+                type: 'POST',
+                url: '{% url 'horario_save_pac' %}',
+                data:{
+                    csrfmiddlewaretoken: '{{ csrf_token }}',
+                    id_hor: id_hor,
+                    id_pac: id_pac,
+                    vdate: vdate    
+                },
+                dataType: 'json'
+            }).done(function(data){
+                $('#mnp').modal('hide');
+                $('#wng').empty().append(data.msg);
+                if(data.type == 'error'){
+                    $('#wng').addClass('alert alert-danger');
+                }else{
+                    $('#wng').addClass('alert alert-success');
+                    data_or_error(data.horario_list);
+                    data_or_error_disp(data.dispo_hor_list);
+                }
+            });
+        }else
+            $('#mnp').modal('hide');
+    }
     $(function () {
         $.ajax({
             type: 'POST',
@@ -117,9 +155,11 @@
             getTbodyDisp(data);
     }
 
-    function sm(i){
+    function sm(id, i, ini, end){
         document.getElementById('mnp').id = 'mnp' + i;
         $('#mnp' + i).modal();
+        $('#id_hor').val(id);
+        $('#tp').empty().append('Agregar paciente: ' + ini + ' - ' + end);
         document.getElementById('mnp' + i).id = 'mnp';
     }
 
@@ -133,7 +173,7 @@
             for (i = 0; i < size; i++) {
                 ini = String(row[i].fields.inicio).split(',');
                 end = String(row[i].fields.fin).split(',');
-                tr += '<tr><td>' + ini[0].substring(0, 5) + ' - ' + end[0].substring(0, 5) + '</td><td class="text-center"><a href="javascript:sm(str('+i+'))">[Agregar paciente]</a></td></tr>';
+                tr += '<tr><td>' + ini[0].substring(0, 5) + ' - ' + end[0].substring(0, 5) + '</td><td class="text-center"><a href="javascript:sm(\'' + row[i].pk + '\',\''+i+'\', \'' + ini[0].substring(0, 5) + '\', \'' + end[0].substring(0, 5) + '\')">[Agregar paciente]</a></td></tr>';
             }
         } else
             tr = '<tr><td colspan="2" class="text-center">No hay cupos disponibles</td></tr>';
@@ -146,13 +186,17 @@
         var tr = '';
         var size = row.length;
         if (size > 0) {
-            var t;
+            var t, state;
             for (i = 0; i < size; i++) {
                 t = String(row[i].fields.id_horario).split(',');
-                tr += '<tr><td>' + t[0].substring(0, 5) + ' - ' + t[1].substring(0, 5) + '</td><td>' + row[i].fields.id_paciente + '</td><td class="text-center">[Ir a consulta]</td></tr>';
+                if(row[i].fields.efectiva == 'N')
+                    state = '<font style="color:orange">Pendiente</font>';
+                else if(row[i].fields.efectiva == 'S')
+                    state = '<font style="color:green">Pendiente</font>';
+                tr += '<tr><td>' + t[0].substring(0, 5) + ' - ' + t[1].substring(0, 5) + '</td><td>' + row[i].fields.id_paciente + '</td><td>' + state + '</td><td class="text-center"><a href="#">[Ir a consulta]</a> - <a href="#">[Eliminar]</a></td></tr>';
             }
         } else
-            tr = '<tr><td colspan="3" class="text-center">No hay citas para este d&iacute;a</td></tr>';
+            tr = '<tr><td colspan="4" class="text-center">No hay citas para este d&iacute;a</td></tr>';
         $('#tb').html(tr);
     }
 

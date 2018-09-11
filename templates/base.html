@@ -36,9 +36,9 @@
             }
             
             #sidebar {
-                min-width: 250px;
-                max-width: 250px;
-                background: #2280b6;
+                min-width: 200px;
+                max-width: 200px;
+                background: #1658bd;
                 color: #fff;
                 transition: all 0.3s;
             }
@@ -89,7 +89,7 @@
             
             #sidebar .sidebar-header {
                 padding: 20px;
-                background: #2280b6;
+                background: #1658bd;
             }
             
             #sidebar .sidebar-header strong {
@@ -197,7 +197,7 @@
                     display: none;
                 }
             }
-            table.table th{background-color: #27729f; color:#fff}
+            table.table th{background-color: #d9dce06e}
             .btn-g{line-height: 31px;
                 background-image: -webkit-gradient(linear,left top,left bottom,from(#f5f5f5),to(#f1f1f1));
                 background-image: -webkit-linear-gradient(top,#f5f5f5,#f1f1f1);
@@ -321,6 +321,18 @@
                 $('#sidebar').toggleClass('active');
             });
         });
+
+        function getAjaxJsonResponse(url, nameForm){
+            $.ajax({
+                type: 'POST',
+                url: url,
+                data: $('#' + nameForm).serialize(),
+                dataType: 'json'
+            }).done(function (data){
+                return jQuery.parseJSON(data);
+            });
+        }
+    
         function isDate(txtDate){
             var currVal = txtDate;
             if(currVal == '')
