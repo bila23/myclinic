@@ -97,3 +97,27 @@ def save_pac_hor(request):
     except Exception as inst:
         print(inst)
         return JsonResponse({'msg': 'Ha ocurrido un error al tratar de reservar el cupo', 'type': 'error'}, safe=False)
+
+@login_required
+def delete_horario(request):
+    try:
+        if (request.method == "POST" and request.is_ajax()):
+            id_hor = request.POST.get('id_hor_delete')
+            vdate = request.POST.get('vdate')
+            model = HorariosOcupados.objects.filter(id = int(id_hor))
+            model.delete()
+            data = get_lists(vdate, gf.findUser(request.user.username), 'Se ha eliminado correctamente la reserva', 'success')
+            return JsonResponse(data, safe=False)   
+    except Exception as inst:
+        print(inst)
+        return JsonResponse({'msg': 'Ha ocurrido un error al tratar eliminar la reserva', 'type': 'error'}, safe=False)
+
+
+def get_lists(vdate, medico, txt_msg, type_msg):
+    day_format = gf.toformat_YYYYMMDD(vdate)
+    horario_list = HorariosOcupados.objects.filter(id_medico = medico, fecha = day_format).order_by('id_horario')
+    dispo_hor_list = Horarios.objects.filter(id_medico = medico).exclude(id__in = HorariosOcupados.objects.values('id_horario').filter(id_medico = medico, fecha = day_format) ).order_by('inicio')
+    data_hor_list = serializers.serialize('json', horario_list, indent=1, use_natural_foreign_keys=True, use_natural_primary_keys=True)
+    data_dispo_hor = serializers.serialize('json', dispo_hor_list)
+    data = {'horario_list': data_hor_list, 'dispo_hor_list': data_dispo_hor, 'msg': txt_msg, 'type': type_msg}
+    return data

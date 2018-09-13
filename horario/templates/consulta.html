@@ -90,11 +90,87 @@
             </div>
         </div>
     </div>
+
+    <div class="modal fade" id="mnp" tabindex="-1" role="dialog" aria-labelledby="tp" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <div class="modal-title" id="tp" style="font-weight:bold"></div>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <select id="psl" class="form-control">
+                        {% if pac_list %}
+                            {% for p in pac_list %}
+                                <option value="{{p.id}}">{{p.nombre}}</option>
+                            {% endfor %}
+                        {% endif %}
+                    </select>
+                </div>
+                <div class="modal-footer">
+                    <input type="hidden" id="id_hor"/>
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
+                    <button type="button" class="btn btn-primary" onclick="spo()">Guardar</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal fade" id="del_div" tabindex="-1" role="dialog" aria-labelledby="deltp" aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered" role="document">
+                <div class="modal-content">
+                    <div class="modal-body" id="del_div_body"></div>
+                    <div style="padding-bottom: 10px;padding-right: 15px;text-align: right;">
+                        <input type="hidden" id="id_hor_del"/>
+                        <button type="button" class="btn btn-primary" onclick="del_hor_ef()" style="margin-right:10px">Si</button>
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">No</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
 </form>
 {% endblock %}
 {% block javascript %}
 {% compress js inline%}
 <script>
+    function del_hor(id_hor, name, ini, end){
+        $('#del_div_body').empty().append('¿Esta seguro que desea eliminar la reserva de ' + name + ' que esta de ' + ini + ' a ' + end + '?');
+        $('#del_div').modal();
+        $('#id_hor_del').val(id_hor);
+    }
+
+    function del_hor_ef(){
+        flag = validate();
+        if(flag){
+            var param = {id_hor_delete : $('#id_hor_del').val(), vdate : $('#id_vdate').val(), csrfmiddlewaretoken: '{{ csrf_token }}'};
+            $.ajax({
+                type: 'POST',
+                url: '{% url 'horario_delete_pac' %}',
+                data: param,
+                dataType: 'json'
+            }).done(function(data){
+                display_show_msg(data);
+                $('#del_div').modal('hide');
+            });
+        }
+    }
+
+    function display_show_msg(data){
+        $('#wng').empty().append(data.msg);
+        if(data.type == 'error'){
+            $('#wng').addClass('alert alert-danger');
+        }else if(data.type == 'warning')
+            $('#wng').addClass('alert alert-warning');
+        else{
+            $('#wng').addClass('alert alert-success');
+            data_or_error(data.horario_list);
+            data_or_error_disp(data.dispo_hor_list);
+        }
+    }
+
     function spo(){
         var id_hor = $('#id_hor').val();
         var id_pac = $('#psl').val();
@@ -113,14 +189,7 @@
                 dataType: 'json'
             }).done(function(data){
                 $('#mnp').modal('hide');
-                $('#wng').empty().append(data.msg);
-                if(data.type == 'error'){
-                    $('#wng').addClass('alert alert-danger');
-                }else{
-                    $('#wng').addClass('alert alert-success');
-                    data_or_error(data.horario_list);
-                    data_or_error_disp(data.dispo_hor_list);
-                }
+                display_show_msg(data);
             });
         }else
             $('#mnp').modal('hide');
@@ -190,10 +259,10 @@
             for (i = 0; i < size; i++) {
                 t = String(row[i].fields.id_horario).split(',');
                 if(row[i].fields.efectiva == 'N')
-                    state = '<font style="color:orange">Pendiente</font>';
+                    state = '<font style="color:#e8ae00;font-weight:bold">Pendiente</font>';
                 else if(row[i].fields.efectiva == 'S')
-                    state = '<font style="color:green">Pendiente</font>';
-                tr += '<tr><td>' + t[0].substring(0, 5) + ' - ' + t[1].substring(0, 5) + '</td><td>' + row[i].fields.id_paciente + '</td><td>' + state + '</td><td class="text-center"><a href="#">[Ir a consulta]</a> - <a href="#">[Eliminar]</a></td></tr>';
+                    state = '<font style="color:green;font-weight:bold">Efectuada</font>';
+                tr += '<tr><td>' + t[0].substring(0, 5) + ' - ' + t[1].substring(0, 5) + '</td><td>' + row[i].fields.id_paciente + '</td><td>' + state + '</td><td class="text-center"><a href="#">[Ir a consulta]</a> - <a href="javascript:del_hor(\'' + row[i].pk+ '\', \'' + row[i].fields.id_paciente + '\', \'' + t[0].substring(0, 5) + '\', \'' + t[1].substring(0, 5) + '\')">[Eliminar]</a></td></tr>';
             }
         } else
             tr = '<tr><td colspan="4" class="text-center">No hay citas para este d&iacute;a</td></tr>';

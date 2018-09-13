@@ -7,4 +7,5 @@ urlpatterns = [
     url('horario/find/q/', views.find_consulta, name='horario_consulta_query'),
     url('horario/find/today/', views.show_today, name='horario_cons_today'),
     url('horario/save/pac/', views.save_pac_hor, name='horario_save_pac'),
+    url('horario/del/pac/', views.delete_horario, name='horario_delete_pac'),
 ]
