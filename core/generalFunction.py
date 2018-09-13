@@ -74,7 +74,11 @@ Funcion que retorna el dia actual en objeto de tipo Date
 def getToday():
     return datetime.now()
 
+
 def stringToDate(date):
+    '''
+    Funcion que transforma un objeto de tipo string a date
+    '''
     if not date:
         return None
     return datetime.strptime(date, "%Y-%m-%d").date()

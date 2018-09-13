@@ -165,7 +165,8 @@
         }else if(data.type == 'warning')
             $('#wng').addClass('alert alert-warning');
         else{
-            $('#wng').addClass('alert alert-success');
+            if(data.msg != null && data.msg != '')
+                $('#wng').addClass('alert alert-success');
             data_or_error(data.horario_list);
             data_or_error_disp(data.dispo_hor_list);
         }
@@ -203,8 +204,7 @@
             },
             dataType: 'json'
         }).done(function (data) {
-            data_or_error(data.horario_list);
-            data_or_error_disp(data.dispo_hor_list);
+            display_show_msg(data);
         });
     });
 
@@ -279,8 +279,7 @@
                     data: $('#mf').serialize(),
                     dataType: 'json'
                 }).done(function (data) {
-                    data_or_error(data.horario_list);
-                    data_or_error_disp(data.dispo_hor_list);
+                    display_show_msg(data);
                 });
             }
         });
