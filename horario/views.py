@@ -7,6 +7,9 @@ from core.models import Usuario
 from .forms import HorConsultaForm
 from django.core import serializers
 import datetime
+import logging
+
+log = logging.getLogger(__name__)
 
 
 @login_required
@@ -17,7 +20,7 @@ def home(request):
         pac_list = Paciente.objects.filter(id_medico = gf.findUser(request.user.username)).order_by('nombre')
         return render(request, 'consulta.html', {'day': today_string, 'pac_list': pac_list})
     except Exception as inst:
-        print(inst)
+        log.error(inst)
         return render(request, 'consulta.html', {'error_msg': 'Ha ocurrido un error al momento de recuperar los pacientes y/o horarios disponibles de este día'})
 
 
@@ -29,7 +32,7 @@ def show_today(request):
         data = get_lists(gf.dateToString(today), medico, '', '')
         return JsonResponse(data, safe=False)
     except Exception as e:
-        print(e)
+        log.error(e)
         return JsonResponse({'msg': 'Ha ocurrido un error al momento de recuperar los pacientes y/o horarios disponibles de este día', 'type': 'error'}, safe=False)
 
 
@@ -43,7 +46,7 @@ def find_consulta(request):
             data = get_lists(day, medico, '', '')
             return JsonResponse(data, safe=False)
     except Exception as inst:
-        print(inst)
+        log.error(inst)
         return JsonResponse({'error_msg': 'Ha ocurrido un error al momento de recuperar los pacientes y/o los horarios disponibles'}, safe=False)
 
 
@@ -72,7 +75,7 @@ def save_pac_hor(request):
 
             return JsonResponse(data, safe=False)
     except Exception as inst:
-        print(inst)
+        log.error(inst)
         return JsonResponse({'msg': 'Ha ocurrido un error al tratar de reservar el cupo', 'type': 'error'}, safe=False)
 
 
@@ -87,15 +90,15 @@ def delete_horario(request):
             data = get_lists(vdate, gf.findUser(request.user.username), 'Se ha eliminado correctamente la reserva', 'success')
             return JsonResponse(data, safe=False)   
     except Exception as inst:
-        print(inst)
+        log.error(inst)
         return JsonResponse({'msg': 'Ha ocurrido un error al tratar eliminar la reserva', 'type': 'error'}, safe=False)
 
 
 def get_lists(vdate, medico, txt_msg, type_msg):
-    weekday = vdate.weekday()
+    weekday = gf.stringToWeekday(vdate)
     day_format = gf.toformat_YYYYMMDD(vdate)
     horario_list = HorariosOcupados.objects.filter(id_medico = medico, fecha = day_format).order_by('id_horario')
-    dispo_hor_list = Horarios.objects.filter(id_medico = medico).exclude(id__in = HorariosOcupados.objects.values('id_horario').filter(id_medico = medico, fecha = day_format) ).order_by('inicio')
+    dispo_hor_list = Horarios.objects.filter(id_medico = medico, dia = weekday).exclude(id__in = HorariosOcupados.objects.values('id_horario').filter(id_medico = medico, fecha = day_format) ).order_by('inicio')
     data_hor_list = serializers.serialize('json', horario_list, indent=1, use_natural_foreign_keys=True, use_natural_primary_keys=True)
     data_dispo_hor = serializers.serialize('json', dispo_hor_list)
     data = {'horario_list': data_hor_list, 'dispo_hor_list': data_dispo_hor, 'msg': txt_msg, 'type': type_msg}

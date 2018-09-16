@@ -1,0 +1,194 @@
+{% extends 'base.html' %}
+{% block content %}
+{% load compress %}
+<div class="row">
+	<div class="col titl_w">
+		Ingreso de nuevo paciente
+	</div>
+</div>
+<div class="row">
+	<div class="col">
+		<h5>1) Verificar si el paciente ya existe</h5>
+	</div>
+</div>
+<div class="row">
+	<div class="col">
+        <input id="pc" name="pc" list="list_pac" oninput="show_pac()" class="form-control" autofocus="autofocus" placeholder="Ingrese el nombre del paciente para verificar si ya esta registrado"/>
+        <datalist id="list_pac">
+            {% for paciente in pac_list%}
+                <option value="{{paciente.nombre}}"/>
+            {% endfor %}
+        </datalist>
+	</div>
+</div>
+<div style="height:50px"></div>
+<div class="row">
+	<div class="col">
+		<h5>2) Ingreso de un nuevo paciente</h5>
+	</div>
+</div>
+<form method="POST" id="mf">
+	{% csrf_token %}
+	<div class="row">
+		<div class="col">
+			<label for="id_nombre">Nombre del paciente:</label>
+			<input type="text" name="nombre" id="id_nombre" class="form-control" placeholder="Nombre" data-validation="required" data-validation-error-msg="Debe ingresar el nombre del paciente"/>
+		</div>
+		<div class="col">
+			<label for="id_fecha_nac">Fecha de nacimiento:</label>
+			<input type="date" name="fecha_nac" id="id_fecha_nac" class="form-control" placeholder="Fecha nac." data-validation="required" data-validation-error-msg="Debe ingresar la fecha de nacimiento"/>
+		</div>
+		<div class="col">
+			<label for="id_sexo">Sexo:</label>
+			<select name="sexo" id="id_sexo" class="form-control">
+				<option value="M">Mujer</option>
+				<option value="H">Hombre</option>
+			</select>
+		</div>
+	</div>
+	<div class="space"></div>
+	<div class="row">
+		<div class="col">
+			<label for="id_municipio">Departamento:</label>
+			<select name="municipio" id="id_municipio" class="form-control">
+				<option value="AHC">Ahuachap&aacute;n</option>
+				<option value="CAB">Caba&ntilde;as</option>
+				<option value="CHA">Chalatenango</option>
+				<option value="CUS">Cuscatl&aacute;n</option>
+				<option value="LIB">La Libertad</option>
+				<option value="PAZ">La Paz</option>
+				<option value="UNI">La Uni&oacute;n</option>
+				<option value="MOR">Moraz&aacute;n</option>
+				<option value="SMI">San Miguel</option>
+				<option value="SSA">San Salvador</option>
+				<option value="SVI">San Vicente</option>
+				<option value="SAN">Santa Ana</option>
+				<option value="SON">Sonsonate</option>
+				<option value="USU">Usulut&aacute;n</option>
+			</select>
+		</div>
+		<div class="col">
+			<label for="id_direccion">Direcci&oacute;n:</label>
+			<input type="text" name="direccion" id="id_direccion" class="form-control" placeholder="Direcci&oacute;n del paciente"/>
+		</div>
+		<div class="col">
+			<label for="id_estado_civil">Estado civil:</label>
+			<select name="estado_civil" id="id_estado_civil" class="form-control">
+				<option value="S">Soltero/a</option>
+				<option value="O">Comprometido/a</option>
+				<option value="C">Casado/a</option>
+				<option value="D">Divorciado/a</option>
+				<option value="V">Viudo/a</option>
+			</select>
+		</div>
+	</div>
+	<div class="space"></div>
+	<div class="row">
+		<div class="col">
+			<label for="id_telefono_casa">Telefono casa:</label>
+			<input type="text" name="telefono_casa" id="id_telefono_casa" class="form-control" placeholder="Tel. casa" maxlength="8"/>
+		</div>
+		<div class="col">
+			<label for="id_telefono_oficina">Telefono oficina:</label>
+			<input type="text" name="telefono_oficina" id="id_telefono_oficina" class="form-control" placeholder="Tel. ofic." maxlength="8"/>
+		</div>
+		<div class="col">
+			<label for="id_celular">Celular:</label>
+			<input type="text" name="celular" id="id_celular" class="form-control" placeholder="Celular" maxlength="8"/>
+		</div>
+	</div>
+	<div class="space"></div>
+	<div class="row">
+		<div class="col">
+			<label for="id_correo">Correo:</label>
+			<input type="text" id="id_correo" name="correo" class="form-control" placeholder="Correo" data-validation="email" data-validation-error-msg-email="Debe ingresar un correo valido"/>
+		</div>
+		<div class="col">
+			<label for="id_aseguradora">Aseguradora:</label>
+			<input type="text" id="id_aseguradora" name="aseguradora" class="form-control" placeholder="Aseguradora" data-suggestions="ACSA, ASEUSISA"/>
+		</div>
+		<div class="col">
+			<label for="id_dui">DUI (con gui&oacute;n):</label>
+			<input type="text" name="dui" id="id_dui" class="form-control" placeholder="DUI" maxlength="10"/>
+		</div>
+	</div>
+	<div class="space"></div>
+	<div class="row">
+		<div class="col">
+			<label for="id_profesion">Profesi&oacute;n:</label>
+			<input type="text" name="profesion" id="id_profesion" class="form-control" placeholder="Profesi&oacute;n"/>
+		</div>
+		<div class="col">
+			<label for="id_empresa">Empresa:</label>
+			<input type="text" name="empresa" id="id_empresa" class="form-control" placeholder="Empresa"/>
+		</div>
+		<div class="col">
+			<label for="id_direccion_empresa">Direcci&oacute;n de Empresa:</label>
+			<input type="text" name="direccion_empresa" id="id_direccion_empresa" class="form-control" placeholder="Direcci&oacute;n de la empresa"/>
+		</div>
+	</div>
+	<div class="space"></div>
+	<div class="row">
+		<div class="col">
+			<button type="submit" class="btn-g" id="btnSave">Guardar paciente</button>
+		</div>
+	</div>
+	<div class="space"></div>
+	<div class="row">
+		<div class="col">
+			<div id="result"></div>
+		</div>
+	</div>
+</form>
+<div class="modal fade" id="mdp" tabindex="-1" role="dialog" aria-labelledby="tp" aria-hidden="true">
+	<div class="modal-dialog modal-dialog-centered" role="document">
+		<div class="modal-content">
+			<div class="modal-header">
+				<div class="modal-title" id="tp" style="font-weight:bold"></div>
+				<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+					<span aria-hidden="true">&times;</span>
+				</button>
+			</div>
+			<div class="modal-body">
+				<div id="modal_content"></div>
+			</div>
+			<div class="modal-footer">
+				<button type="button" class="btn btn-primary" data-dismiss="modal">Cerrar</button>
+			</div>
+		</div>
+	</div>
+</div>
+{% endblock %}
+{% block javascript %}
+{% compress js inline%}
+<script>
+    function show_pac(){
+        var val = document.getElementById('pc').value;
+        var opts = document.getElementById('list_pac').childNodes;
+        for (var i = 0; i < opts.length; i++) {
+          if (opts[i].value === val) {
+			$.ajax({
+				type: 'POST',
+				url: '{% url 'paciente_find_by_key' %}',
+				data: {
+					csrfmiddlewaretoken: '{{ csrf_token }}',
+					name_pac: opts[i].value
+				},
+				dataType: 'json'
+			}).done(function(data){
+				pac = jQuery.parseJSON(data.paciente);
+				$('#tp').empty().append('Paciente: ' + pac[0].fields.nombre);
+				var html = '<table style="padding:7px"><tr><td>DUI:</td><td>' + nvl(pac[0].fields.dui, '') + '</td></tr>';
+				html += '<tr><td>Correo:</td><td>' + nvl(pac[0].fields.correo, '') + '</td></tr>';
+				html += '<tr><td>Celuar:</td><td>' + nvl(pac[0].fields.celular, '') + '</td></tr>';
+				html += '<tr><td>Fecha de nac.:</td><td>' + nvl(pac[0].fields.fecha_nac, '') + '</td></tr>';
+				$('#modal_content').empty().append(html);
+				$('#mdp').modal();
+			});
+            break;
+          }
+        }
+    }
+</script>
+{% endcompress %}
+{% endblock %}

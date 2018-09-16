@@ -30,6 +30,7 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'horario.apps.HorarioConfig',
+    'paciente.apps.PacienteConfig',
     'compressor', #http://django-compressor.readthedocs.io/en/latest/quickstart/
 
 ]
@@ -140,3 +141,43 @@ LOGOUT_REDIRECT_URL = 'login'
 SILENCED_SYSTEM_CHECKS = [
     'fields.W342'
 ]
+
+LOGGING = {
+    'version': 1,
+    'disable_existing_loggers': False,
+    'formatters': {
+        'verbose': {
+            'format': '{levelname} {asctime} {module} {process:d} {thread:d} {message}',
+            'style': '{',
+        },
+    },
+    'handlers': {
+        'file': {
+            'level': 'ERROR',
+            'class': 'logging.FileHandler',
+            'filename': '/Users/will/Desktop/itworks/mc/code/myclinic.log',
+            'formatter': 'verbose'
+        },
+        'console': {
+            'level': 'INFO',
+            'class': 'logging.StreamHandler',
+            'formatter': 'verbose'
+        },
+    },
+    'loggers': {
+        'django': {
+            'handlers': ['file', 'console'],
+            'level': 'ERROR',
+            'propagate': True,
+        },
+        'django.request': {
+            'handlers': ['file', 'console'],
+            'level': 'ERROR',
+            'propagate': False,
+        },
+        'myclinic.custom': {
+            'handlers': ['file', 'console'],
+            'level': 'ERROR',
+        }
+    }
+}

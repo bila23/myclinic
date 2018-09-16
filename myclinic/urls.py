@@ -12,4 +12,5 @@ urlpatterns = [
     path('', TemplateView.as_view(template_name='home.html'), name='home'),
     path(r'', include('core.urls')),
     path(r'', include('horario.urls')),
+    path(r'', include('paciente.urls')),
 ]

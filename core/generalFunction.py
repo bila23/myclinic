@@ -82,3 +82,15 @@ def stringToDate(date):
     if not date:
         return None
     return datetime.strptime(date, "%Y-%m-%d").date()
+
+
+def stringToDate_DDMMYYYY(date):
+    if not date:
+        return None
+    return datetime.strptime(date, '%d/%m/%Y').date()
+
+
+def stringToWeekday(date):
+    if not date:
+        return None
+    return stringToDate_DDMMYYYY(date).weekday()

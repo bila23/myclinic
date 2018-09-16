@@ -232,6 +232,9 @@
                 border-radius: .25rem;
                 transition: border-color .15s ease-in-out,box-shadow .15s ease-in-out;
             }
+            .titl_w{
+                margin-bottom:26px;font-size:23px;font-weight:bold;color:cadetblue
+            }
     </style>
 </head>
 <body>
@@ -357,7 +360,13 @@
                     return false;
             }
             return true;
-          }      
+          }
+
+          function nvl(obj, value){
+              if(obj == null || obj == '')
+                return value;
+              return obj;
+          }
     </script>
     {% endcompress %}
     {% block javascript %}

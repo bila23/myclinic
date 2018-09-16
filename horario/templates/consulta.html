@@ -10,7 +10,7 @@
     {% endif %}
     <div class="row align-items-center">
         <div class="col-md-4 col-sm-12">
-            <button type="submit" class="btn-g">Nuevo paciente</button>
+            <button type="button" onclick="window.location.href='{% url 'paciente_home' %}'" class="btn-g">Nuevo paciente</button>
         </div>
         <div class="col-md-8" style="text-align: right">
             Fecha de consulta:
