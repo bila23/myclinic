@@ -271,7 +271,7 @@
                 <li>
                     <a href="#">
                         <i class="fas fa-image"></i>
-                        Portfolio
+                        Pacientes
                     </a>
                 </li>
                 <li>
@@ -342,7 +342,7 @@
               return false;
             if((currVal.match(/\//g) || []).length != 2) return false;
             var rxDatePattern = /^(\d{1,2})(\/|-)(\d{1,2})(\/|-)(\d{4})$/;
-            var dtArray = currVal.match(rxDatePattern); // is format OK?
+            var dtArray = currVal.match(rxDatePattern);
             if (dtArray == null)
                return false;
             dtMonth = dtArray[3];
@@ -366,6 +366,20 @@
               if(obj == null || obj == '')
                 return value;
               return obj;
+          }
+
+          function val_input_danger(msg, id_input){
+			$('#msg_form').addClass('alert alert-danger');
+			$('#msg_form').append('<span> - ' + msg + '</span><br/>');
+			$('#' + id_input).css('border-color', '#721c24');   
+          }
+
+          function reset_validate_form(inputs){
+            $('#msg_form').empty();
+            $('#msg_form').removeClass('alert alert-danger');
+            for(i = 0; i<inputs.length; i++){
+                $('#' + inputs[i]).css('border-color', '#ced4da');
+            }
           }
     </script>
     {% endcompress %}

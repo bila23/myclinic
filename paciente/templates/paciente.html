@@ -6,6 +6,7 @@
 		Ingreso de nuevo paciente
 	</div>
 </div>
+<div id="msg"></div>
 <div class="row">
 	<div class="col">
 		<h5>1) Verificar si el paciente ya existe</h5>
@@ -24,19 +25,24 @@
 <div style="height:50px"></div>
 <div class="row">
 	<div class="col">
-		<h5>2) Ingreso de un nuevo paciente</h5>
+		<h5>2) En el caso que no exista, ingrese el nuevo paciente</h5>
 	</div>
 </div>
 <form method="POST" id="mf">
+	<div class="row">
+		<div class="col">
+			<div id="msg_form"></div>
+		</div>
+	</div>
 	{% csrf_token %}
 	<div class="row">
 		<div class="col">
-			<label for="id_nombre">Nombre del paciente:</label>
-			<input type="text" name="nombre" id="id_nombre" class="form-control" placeholder="Nombre" data-validation="required" data-validation-error-msg="Debe ingresar el nombre del paciente"/>
+			<label for="id_nombre">Nombre del paciente *:</label>
+			<input type="text" name="nombre" id="id_nombre" class="form-control" placeholder="Nombre">
 		</div>
 		<div class="col">
-			<label for="id_fecha_nac">Fecha de nacimiento:</label>
-			<input type="date" name="fecha_nac" id="id_fecha_nac" class="form-control" placeholder="Fecha nac." data-validation="required" data-validation-error-msg="Debe ingresar la fecha de nacimiento"/>
+			<label for="id_fecha_nac">Fecha de nacimiento *:</label>
+			<input type="text" name="fecha_nac" id="id_fecha_nac" class="form-control" placeholder="dd/mm/yyyy"/>
 		</div>
 		<div class="col">
 			<label for="id_sexo">Sexo:</label>
@@ -46,7 +52,6 @@
 			</select>
 		</div>
 	</div>
-	<div class="space"></div>
 	<div class="row">
 		<div class="col">
 			<label for="id_municipio">Departamento:</label>
@@ -82,7 +87,6 @@
 			</select>
 		</div>
 	</div>
-	<div class="space"></div>
 	<div class="row">
 		<div class="col">
 			<label for="id_telefono_casa">Telefono casa:</label>
@@ -93,26 +97,24 @@
 			<input type="text" name="telefono_oficina" id="id_telefono_oficina" class="form-control" placeholder="Tel. ofic." maxlength="8"/>
 		</div>
 		<div class="col">
-			<label for="id_celular">Celular:</label>
+			<label for="id_celular">Celular *:</label>
 			<input type="text" name="celular" id="id_celular" class="form-control" placeholder="Celular" maxlength="8"/>
 		</div>
 	</div>
-	<div class="space"></div>
 	<div class="row">
 		<div class="col">
-			<label for="id_correo">Correo:</label>
-			<input type="text" id="id_correo" name="correo" class="form-control" placeholder="Correo" data-validation="email" data-validation-error-msg-email="Debe ingresar un correo valido"/>
+			<label for="id_correo">Correo *:</label>
+			<input type="text" id="id_correo" name="correo" class="form-control" placeholder="Correo"/>
 		</div>
 		<div class="col">
 			<label for="id_aseguradora">Aseguradora:</label>
-			<input type="text" id="id_aseguradora" name="aseguradora" class="form-control" placeholder="Aseguradora" data-suggestions="ACSA, ASEUSISA"/>
+			<input type="text" id="id_aseguradora" name="aseguradora" class="form-control" placeholder="Aseguradora"/>
 		</div>
 		<div class="col">
 			<label for="id_dui">DUI (con gui&oacute;n):</label>
 			<input type="text" name="dui" id="id_dui" class="form-control" placeholder="DUI" maxlength="10"/>
 		</div>
 	</div>
-	<div class="space"></div>
 	<div class="row">
 		<div class="col">
 			<label for="id_profesion">Profesi&oacute;n:</label>
@@ -127,13 +129,16 @@
 			<input type="text" name="direccion_empresa" id="id_direccion_empresa" class="form-control" placeholder="Direcci&oacute;n de la empresa"/>
 		</div>
 	</div>
-	<div class="space"></div>
+	<div class="row">
+			<div class="col">
+				* son campos obligatorios
+			</div>
+		</div>
 	<div class="row">
 		<div class="col">
-			<button type="submit" class="btn-g" id="btnSave">Guardar paciente</button>
+			<button type="button" class="btn-g" id="btnSave" onclick="save_form()">Guardar paciente</button>
 		</div>
 	</div>
-	<div class="space"></div>
 	<div class="row">
 		<div class="col">
 			<div id="result"></div>
@@ -167,28 +172,79 @@
         var opts = document.getElementById('list_pac').childNodes;
         for (var i = 0; i < opts.length; i++) {
           if (opts[i].value === val) {
+			param = {csrfmiddlewaretoken:'{{ csrf_token }}', name_pac:opts[i].value};
 			$.ajax({
-				type: 'POST',
-				url: '{% url 'paciente_find_by_key' %}',
-				data: {
-					csrfmiddlewaretoken: '{{ csrf_token }}',
-					name_pac: opts[i].value
-				},
-				dataType: 'json'
-			}).done(function(data){
-				pac = jQuery.parseJSON(data.paciente);
-				$('#tp').empty().append('Paciente: ' + pac[0].fields.nombre);
-				var html = '<table style="padding:7px"><tr><td>DUI:</td><td>' + nvl(pac[0].fields.dui, '') + '</td></tr>';
-				html += '<tr><td>Correo:</td><td>' + nvl(pac[0].fields.correo, '') + '</td></tr>';
-				html += '<tr><td>Celuar:</td><td>' + nvl(pac[0].fields.celular, '') + '</td></tr>';
-				html += '<tr><td>Fecha de nac.:</td><td>' + nvl(pac[0].fields.fecha_nac, '') + '</td></tr>';
-				$('#modal_content').empty().append(html);
-				$('#mdp').modal();
-			});
+                type: 'POST',
+                url: '{% url 'paciente_find_by_key' %}',
+                data: param,
+                dataType: 'json'
+            }).done(function (data){
+				if (!$.isEmptyObject(data.msg)) {
+					$('#msg').addClass('alert alert-danger');
+					$('#msg').empty().append(data.msg);
+				}else{
+					pac = jQuery.parseJSON(data.paciente);
+					if(pac.length > 1){
+						alert('Existe mas de un paciente con el mismo nombre, sera correcto eso? se mostrará la información del primer paciente');
+					}
+					$('#tp').empty().append('Paciente: ' + pac[0].fields.nombre);
+					var html = '<table class="table"><tr><td>DUI:</td><td>' + nvl(pac[0].fields.dui, '') + '</td></tr>';
+					html += '<tr><td>Correo:</td><td>' + nvl(pac[0].fields.correo, '') + '</td></tr>';
+					html += '<tr><td>Celuar:</td><td>' + nvl(pac[0].fields.celular, '') + '</td></tr>';
+					date = '';
+					if(pac[0].fields.fecha_nac != '' && pac[0].fields.fecha_nac != null){
+						dates = pac[0].fields.fecha_nac.split('-');
+						date = dates[2] + '/' + dates[1] + '/' + dates[0];
+					}
+					html += '<tr><td>Fecha de nac.:</td><td>' + date + '</td></tr>';
+					$('#modal_content').empty().append(html);
+					$('#mdp').modal();
+				}
+            });
             break;
           }
         }
-    }
+	}
+	
+	function save_form(){
+		inputs = ['id_nombre', 'id_fecha_nac', 'id_celular', 'id_correo'];
+		reset_validate_form(inputs);
+		var nombre = $('#id_nombre').val();
+		var fecnac = $('#id_fecha_nac').val();
+		var celular = $('#id_celular').val();
+		var correo = $('#id_correo').val();
+		flag = true;
+		if(nombre == ''){
+			val_input_danger('Debe ingresar el nombre del paciente', 'id_nombre');
+			flag = false;
+		}if(fecnac == ''){
+			val_input_danger('Debe ingresar la fecha de nacimiento del paciente', 'id_fecha_nac');
+			flag = false;
+		}else if(isDate(fecnac) == false){
+			val_input_danger('La fecha de nacimiento debe poseer el formato DD/MM/YYYY', 'id_fecha_nac');
+			flag = false;
+		}if(celular == ''){
+			val_input_danger('Debe ingresar el celular del paciente', 'id_celular');
+			flag = false;
+		}if(correo == ''){
+			val_input_danger('Debe ingresar el correo del paciente', 'id_correo');			
+			flag = false;
+		}
+		if(flag){
+			$.ajax({
+				type: 'POST',
+				url: '{% url 'paciente_save' %}',
+				data: $('#mf').serialize(),
+				dataType: 'json'
+			}).done(function (data){
+				if(data.type == 'success'){
+					$('#msg').addClass('alert alert-success');
+				}else if(data.type == 'error')
+					$('#msg').addClass('alert alert-danger');
+				$('#msg').empty().append(data.msg);
+			});
+		}
+	}
 </script>
 {% endcompress %}
 {% endblock %}
