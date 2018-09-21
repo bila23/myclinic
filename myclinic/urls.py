@@ -13,4 +13,5 @@ urlpatterns = [
     path(r'', include('core.urls')),
     path(r'', include('horario.urls')),
     path(r'', include('paciente.urls')),
+    path(r'', include('consulta.urls')),
 ]

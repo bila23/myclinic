@@ -257,6 +257,7 @@
         if (size > 0) {
             var t, state;
             for (i = 0; i < size; i++) {
+                alert(row[i]);
                 t = String(row[i].fields.id_horario).split(',');
                 if(row[i].fields.efectiva == 'N')
                     state = '<font style="color:#e8ae00;font-weight:bold">Pendiente</font>';
