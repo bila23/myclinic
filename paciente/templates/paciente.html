@@ -6,7 +6,6 @@
 		Ingreso de nuevo paciente
 	</div>
 </div>
-<div id="msg"></div>
 <div class="row">
 	<div class="col">
 		<h5>1) Verificar si el paciente ya existe</h5>
@@ -139,11 +138,6 @@
 			<button type="button" class="btn-g" id="btnSave" onclick="save_form()">Guardar paciente</button>
 		</div>
 	</div>
-	<div class="row">
-		<div class="col">
-			<div id="result"></div>
-		</div>
-	</div>
 </form>
 <div class="modal fade" id="mdp" tabindex="-1" role="dialog" aria-labelledby="tp" aria-hidden="true">
 	<div class="modal-dialog modal-dialog-centered" role="document">
@@ -180,8 +174,8 @@
                 dataType: 'json'
             }).done(function (data){
 				if (!$.isEmptyObject(data.msg)) {
-					$('#msg').addClass('alert alert-danger');
-					$('#msg').empty().append(data.msg);
+					$('#msg_form').addClass('alert alert-danger');
+					$('#msg_form').empty().append(data.msg);
 				}else{
 					pac = jQuery.parseJSON(data.paciente);
 					if(pac.length > 1){
@@ -238,10 +232,10 @@
 				dataType: 'json'
 			}).done(function (data){
 				if(data.type == 'success'){
-					$('#msg').addClass('alert alert-success');
+					$('#msg_form').addClass('alert alert-success');
 				}else if(data.type == 'error')
-					$('#msg').addClass('alert alert-danger');
-				$('#msg').empty().append(data.msg);
+					$('#msg_form').addClass('alert alert-danger');
+				$('#msg_form').empty().append(data.msg);
 			});
 		}
 	}
