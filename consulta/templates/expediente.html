@@ -1,4 +1,78 @@
 {% extends 'base.html' %}
 {% block content %}
 {% load compress %}
+<div class="row" style="font-weight:bold;margin-bottom:15px">
+    <div class="col-6">
+        Paciente: {{horario.id_paciente.nombre}}
+    </div>
+    <div class="col-6" style="font-weight:bold; text-align:right">
+        {{horario.id_horario.inicio}} a {{horario.id_horario.fin}}
+    </div>
+</div>
+<form method="POST">
+    <div class="row">
+        <div class="col">
+            <div id="msg"></div>
+            {% if msg and type == "error" %}
+                <div id="msg_error" class="alert alert-danger">{{msg}}</div>
+            {% endif %}
+        </div>
+    </div>
+    {% csrf_token %}
+    <ul class="nav nav-pills mb-4" style="border-bottom:2px solid #0000002e;" id="tab" role="tablist">
+        <li class="nav-item">
+            <a class="nav-link active" id="pills-1-tab" data-toggle="pill" href="#pills-1" role="tab" aria-controls="pills-1" aria-selected="true">Datos generales</a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link" id="pills-2-tab" data-toggle="pill" href="#pills-2" role="tab" aria-controls="pills-2" aria-selected="false">Medicamentos</a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link" id="pills-3-tab" data-toggle="pill" href="#pills-3" role="tab" aria-controls="pills-3" aria-selected="false">Examenes</a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link" id="pills-4-tab" data-toggle="pill" href="#pills-4" role="tab" aria-controls="pills-4" aria-selected="false">Referencias</a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link" id="pills-5-tab" data-toggle="pill" href="#pills-5" role="tab" aria-controls="pills-5" aria-selected="false">Historial</a>
+        </li>
+    </ul>
+    <div class="tab-content" id="pills-tabContent">
+        <div class="tab-pane fade show active" id="pills-1" role="tabpanel" aria-labelledby="pills-1-tab">
+                <div class="row" style="margin-bottom:15px">
+                        <div class="col">
+                            <label for="talla">Talla:</label>
+                            <input type="text" class="form-control" id="talla" autofocus/>
+                        </div>
+                        <div class="col">
+                            <label for="peso">Peso:</label>
+                            <input type="text" class="form-control" id="peso"/>
+                        </div>
+                        <div class="col">
+                            <label for="pres_art">Presi&oacute;n arterial:</label>
+                            <input type="text" class="form-control" id="pres_art"/>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="problema">Definici&oacute;n de problema:</label>
+                        <textarea id="problema" class="form-control" placeholder="Escriba la raz&oacute;n de la consulta"></textarea>
+                    </div>
+                    <div class="form-group">
+                        <label for="diagnostico">Diagn&oacute;stico del paciente:</label>
+                        <textarea id="diagnostico" class="form-control" placeholder="Escriba el/los diagn&oacute;stico(s) del paciente"></textarea>
+                    </div>
+                    <div class="form-group">
+                        <label for="tratamiento">Tratamiento recomendado:</label>
+                        <textarea id="tratamiento" class="form-control" placeholder="Escriba los tratamientos recomendados"></textarea>
+                    </div>
+                    <div class="form-group">
+                        <label for="recomendacion">Recomendaciones:</label>
+                        <textarea id="recomendacion" class="form-control" placeholder="Escriba las recomendaciones que sugiere en base a la consulta"></textarea>
+                    </div>
+        </div>
+        <div class="tab-pane fade" id="pills-2" role="tabpanel" aria-labelledby="pills-2-tab">...</div>
+        <div class="tab-pane fade" id="pills-3" role="tabpanel" aria-labelledby="pills-3-tab">...</div>
+        <div class="tab-pane fade" id="pills-4" role="tabpanel" aria-labelledby="pills-4-tab">ref</div>
+        <div class="tab-pane fade" id="pills-5" role="tabpanel" aria-labelledby="pills-5-tab">historial</div>
+    </div>
+</form>
 {% endblock %}
