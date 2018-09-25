@@ -9,7 +9,7 @@
         {{horario.id_horario.inicio}} a {{horario.id_horario.fin}}
     </div>
 </div>
-<form method="POST">
+<form method="POST" id="mf">
     <div class="row">
         <div class="col">
             <div id="msg"></div>
@@ -19,6 +19,9 @@
         </div>
     </div>
     {% csrf_token %}
+    <input type="hidden" value="{{consulta.id}}" id="id_int"/>
+    <input type="hidden" value="{{consulta.id_horario.id}}" id="id_horario"/>
+    <input type="hidden" value="{{consulta.id_paciente.id}}" id="id_paciente"/>
     <ul class="nav nav-pills mb-4" style="border-bottom:2px solid #0000002e;" id="tab" role="tablist">
         <li class="nav-item">
             <a class="nav-link active" id="pills-1-tab" data-toggle="pill" href="#pills-1" role="tab" aria-controls="pills-1" aria-selected="true">Datos generales</a>
@@ -38,36 +41,47 @@
     </ul>
     <div class="tab-content" id="pills-tabContent">
         <div class="tab-pane fade show active" id="pills-1" role="tabpanel" aria-labelledby="pills-1-tab">
-                <div class="row" style="margin-bottom:15px">
-                        <div class="col">
-                            <label for="talla">Talla:</label>
-                            <input type="text" class="form-control" id="talla" autofocus/>
-                        </div>
-                        <div class="col">
-                            <label for="peso">Peso:</label>
-                            <input type="text" class="form-control" id="peso"/>
-                        </div>
-                        <div class="col">
-                            <label for="pres_art">Presi&oacute;n arterial:</label>
-                            <input type="text" class="form-control" id="pres_art"/>
-                        </div>
+            <div class="row" style="margin-bottom:15px">
+                    <div class="col">
+                        <label for="talla">Talla:</label>
+                        <input type="text" class="form-control" id="talla" autofocus value="{{consulta.talla}}"/>
                     </div>
-                    <div class="form-group">
-                        <label for="problema">Definici&oacute;n de problema:</label>
-                        <textarea id="problema" class="form-control" placeholder="Escriba la raz&oacute;n de la consulta"></textarea>
+                    <div class="col">
+                        <label for="peso">Peso:</label>
+                        <input type="text" class="form-control" id="peso" value="{{consulta.peso}}"/>
                     </div>
-                    <div class="form-group">
-                        <label for="diagnostico">Diagn&oacute;stico del paciente:</label>
-                        <textarea id="diagnostico" class="form-control" placeholder="Escriba el/los diagn&oacute;stico(s) del paciente"></textarea>
+                    <div class="col">
+                        <label for="presion_art">Presi&oacute;n arterial:</label>
+                        <input type="text" class="form-control" id="presion_art" value="{{consulta.presion_art}}"/>
                     </div>
-                    <div class="form-group">
-                        <label for="tratamiento">Tratamiento recomendado:</label>
-                        <textarea id="tratamiento" class="form-control" placeholder="Escriba los tratamientos recomendados"></textarea>
+                </div>
+                <div class="form-group">
+                    <label for="problema">Definici&oacute;n de problema *:</label>
+                    <textarea id="problema" class="form-control" placeholder="Escriba la raz&oacute;n de la consulta" value="{{consulta.problema}}"></textarea>
+                </div>
+                <div class="form-group">
+                    <label for="diagnostico">Diagn&oacute;stico del paciente *:</label>
+                    <textarea id="diagnostico" class="form-control" placeholder="Escriba el/los diagn&oacute;stico(s) del paciente" value="{{consulta.diagnostico}}"></textarea>
+                </div>
+                <div class="form-group">
+                    <label for="tratamiento">Tratamiento recomendado *:</label>
+                    <textarea id="tratamiento" class="form-control" placeholder="Escriba los tratamientos recomendados" value="{{consulta.tratamiento}}"></textarea>
+                </div>
+                <div class="form-group">
+                    <label for="recomendacion">Recomendaciones:</label>
+                    <textarea id="recomendacion" class="form-control" placeholder="Escriba las recomendaciones que sugiere en base a la consulta" value="{{consulta.recomendacion}}"></textarea>
+                </div>
+                <div class="form-group">
+                    <label>* Son datos obligatorios</label>
+                </div>
+                <div class="row">
+                    <div class="col">
+                        <div id="msg_form"></div>
                     </div>
-                    <div class="form-group">
-                        <label for="recomendacion">Recomendaciones:</label>
-                        <textarea id="recomendacion" class="form-control" placeholder="Escriba las recomendaciones que sugiere en base a la consulta"></textarea>
-                    </div>
+                </div>
+                <div class="form-group">
+                    <button type="button" class="btn-g" id="upd_btn" onclick="save_form()">Guardar</button>
+                </div>
         </div>
         <div class="tab-pane fade" id="pills-2" role="tabpanel" aria-labelledby="pills-2-tab">...</div>
         <div class="tab-pane fade" id="pills-3" role="tabpanel" aria-labelledby="pills-3-tab">...</div>
@@ -75,4 +89,42 @@
         <div class="tab-pane fade" id="pills-5" role="tabpanel" aria-labelledby="pills-5-tab">historial</div>
     </div>
 </form>
+{% endblock %}
+{% block javascript %}
+{% compress js inline%}
+<script>
+    function save_form(){
+        inputs = ['problema', 'diagnostico', 'tratamiento'];
+		reset_validate_form(inputs);
+        var problema = $('#problema').val();
+        var diagnostico = $('#diagnostico').val();
+        var tratamiento = $('#tratamiento').val();
+        flag = true;
+        if(problema == ''){
+            val_input_danger('Debe ingresar la definici&oacute;n del problema', 'problema');
+			flag = false;
+        }if(diagnostico == ''){
+            val_input_danger('Debe ingresar el diagn&oacute;stico del paciente', 'diagnostico');
+			flag = false;
+        }if(tratamiento == ''){
+            val_input_danger('Debe ingresar el tratamiento recomendado', 'tratamiento');
+			flag = false;
+        }
+        if(flag){
+			$.ajax({
+				type: 'POST',
+				url: '{% url 'expediente_save' %}',
+				data: $('#mf').serialize(),
+				dataType: 'json'
+			}).done(function (data){
+				if(data.type == 'success'){
+					$('#msg_form').addClass('alert alert-success');
+				}else if(data.type == 'error')
+					$('#msg_form').addClass('alert alert-danger');
+				$('#msg_form').empty().append(data.msg);
+			});
+        }
+    }
+</script>
+{% endcompress %}
 {% endblock %}
