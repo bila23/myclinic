@@ -38,7 +38,9 @@ def save_paciente(request):
             user = request.user.username
             model = PacienteForm(request.POST)
             paciente = model.save(commit = False)
+            fecha_nac = request.POST.get('fecha_nac')
             paciente.id_medico = gf.findUser(user)
+            paciente.fecha_nac = gf.toformat_YYYYMMDD(fecha_nac)
             paciente.usuario_crea = user
             paciente.fec_crea = timezone.now()
             paciente.save()

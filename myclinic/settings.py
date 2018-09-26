@@ -32,6 +32,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'horario.apps.HorarioConfig',
     'paciente.apps.PacienteConfig',
+    'consulta.apps.ConsultaConfig',
     'compressor', #http://django-compressor.readthedocs.io/en/latest/quickstart/
 
 ]

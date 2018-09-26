@@ -262,7 +262,7 @@
                     state = '<font style="color:#e8ae00;font-weight:bold">Pendiente</font>';
                 else if(row[i].fields.efectiva == 'S')
                     state = '<font style="color:green;font-weight:bold">Efectuada</font>';
-                tr += '<tr><td>' + t[0].substring(0, 5) + ' - ' + t[1].substring(0, 5) + '</td><td>' + row[i].fields.id_paciente + '</td><td>' + state + '</td><td class="text-center"><a href="#">[Ir a consulta]</a> - <a href="javascript:del_hor(\'' + row[i].pk+ '\', \'' + row[i].fields.id_paciente + '\', \'' + t[0].substring(0, 5) + '\', \'' + t[1].substring(0, 5) + '\')">[Eliminar]</a></td></tr>';
+                tr += '<tr><td>' + t[0].substring(0, 5) + ' - ' + t[1].substring(0, 5) + '</td><td>' + row[i].fields.id_paciente + '</td><td>' + state + '</td><td class="text-center"><a href="{% url "expediente_paciente" %}?pk=' + row[i].pk + '">[Ir a consulta]</a> - <a href="javascript:del_hor(\'' + row[i].pk + '\', \'' + row[i].fields.id_paciente + '\', \'' + t[0].substring(0, 5) + '\', \'' + t[1].substring(0, 5) + '\')">[Eliminar]</a></td></tr>';
             }
         } else
             tr = '<tr><td colspan="4" class="text-center">No hay citas para este d&iacute;a</td></tr>';

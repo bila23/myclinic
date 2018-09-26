@@ -212,6 +212,7 @@ class Consultas(models.Model):
     fec_crea = models.DateTimeField(blank=True, null=True)
     observacion_receta = models.CharField(max_length=4000, blank=True, null=True)
     edad_paciente = models.IntegerField(blank=True, null=True)
+    diagnostico = models.CharField(max_length=5000, blank=True, null=True)
 
     class Meta:
         managed = False
