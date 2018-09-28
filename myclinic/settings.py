@@ -33,6 +33,7 @@ INSTALLED_APPS = [
     'horario.apps.HorarioConfig',
     'paciente.apps.PacienteConfig',
     'consulta.apps.ConsultaConfig',
+    'crud.apps.CrudConfig',
     'compressor', #http://django-compressor.readthedocs.io/en/latest/quickstart/
 
 ]
@@ -157,7 +158,7 @@ LOGGING = {
         'file': {
             'level': 'ERROR',
             'class': 'logging.FileHandler',
-            'filename': '/Users/will/Desktop/itworks/mc/code/myclinic.log',
+            'filename': 'C:\Work\Mauri\itWorks\Dev\myclinic\log\myclinic.log',
             'formatter': 'verbose'
         },
         'console': {
