@@ -145,7 +145,7 @@ SILENCED_SYSTEM_CHECKS = [
     'fields.W342'
 ]
 
-LOGGING = {
+'''LOGGING = {
     'version': 1,
     'disable_existing_loggers': False,
     'formatters': {
@@ -183,4 +183,4 @@ LOGGING = {
             'level': 'ERROR',
         }
     }
-}
+}'''
