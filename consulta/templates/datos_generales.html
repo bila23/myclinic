@@ -1,0 +1,41 @@
+<div class="row" style="margin-bottom:15px">
+    <div class="col">
+        <label for="talla">Talla:</label>
+        <input type="text" class="form-control" id="id_talla" name="talla" autofocus value="{{consulta.talla | default_if_none:''}}"/>
+    </div>
+    <div class="col">
+        <label for="peso">Peso:</label>
+        <input type="text" class="form-control" id="id_peso" name="peso" value="{{consulta.peso | default_if_none:''}}"/>
+    </div>
+    <div class="col">
+        <label for="presion_art">Presi&oacute;n arterial:</label>
+        <input type="text" class="form-control" id="id_presion_art" name="presion_art" value="{{consulta.presion_art | default_if_none:''}}"/>
+    </div>
+</div>
+<div class="form-group">
+    <label for="problema">Definici&oacute;n de problema *:</label>
+    <textarea id="id_problema" class="form-control" placeholder="Escriba la raz&oacute;n de la consulta" value="{{consulta.problema}}" name="problema"></textarea>
+</div>
+<div class="form-group">
+    <label for="diagnostico">Diagn&oacute;stico del paciente *:</label>
+    <textarea id="id_diagnostico" class="form-control" placeholder="Escriba el/los diagn&oacute;stico(s) del paciente" value="{{consulta.diagnostico}}" name="diagnostico"></textarea>
+</div>
+<div class="form-group">
+    <label for="tratamiento">Tratamiento recomendado *:</label>
+    <textarea id="id_tratamiento" class="form-control" placeholder="Escriba los tratamientos recomendados" value="{{consulta.tratamiento}}" name="tratamiento"></textarea>
+</div>
+<div class="form-group">
+    <label for="recomendacion">Recomendaciones:</label>
+    <textarea id="id_recomendacion" class="form-control" placeholder="Escriba las recomendaciones que sugiere en base a la consulta" value="{{consulta.recomendacion}}" name="recomendacion"></textarea>
+</div>
+<div class="form-group">
+    <label>* Son datos obligatorios</label>
+</div>
+<div class="row">
+    <div class="col">
+        <div id="msg_form"></div>
+    </div>
+</div>
+<div class="form-group">
+    <button type="button" class="btn-g" id="upd_btn" onclick="save_form()">Guardar</button>
+</div>

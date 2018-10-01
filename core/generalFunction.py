@@ -94,14 +94,3 @@ def stringToWeekday(date):
     if not date:
         return None
     return stringToDate_DDMMYYYY(date).weekday()
-
-def paciente_horario(id_horario_oc):
-    '''
-    Funcion que verifica si el horario ocupado
-    del medico correspondiente, si es asi retorna el registro
-    del horario ocupado en caso contrario retorna null
-    '''
-    horario_ocupado = HorariosOcupados.objects.get(id = id_horario_oc)
-    if not horario_ocupado:
-        return None
-    return horario_ocupado

@@ -1,14 +1,7 @@
 from django import forms
+from core.models import Consultas
 
-class ExpedienteForm(forms.Form):
-    id_int = forms.IntegerField(),
-    id_horario = forms.IntegerField(),
-    id_paciente = forms.IntegerField(),
-    fecha = forms.DateField(),
-    problema = forms.CharField(),
-    diagnostico = forms.CharField(),
-    tratamiento = forms.CharField(),
-    recomendacion = forms.CharField(),
-    talla = forms.DecimalField(),
-    peso = forms.DecimalField(),
-    pres_art = forms.DecimalField()
+class ExpedienteForm(forms.ModelForm):
+    class Meta:
+        model = Consultas
+        fields = ('id', 'id_medico', 'problema', 'diagnostico', 'tratamiento', 'recomendacion', 'talla', 'peso', 'presion_art')
