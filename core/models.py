@@ -196,8 +196,8 @@ class AuthUserUserPermissions(models.Model):
 
 
 class Consultas(models.Model):
-    id_medico = models.ForeignKey('Usuario', models.DO_NOTHING, db_column='id_medico', primary_key=True)
-    id = models.IntegerField()
+    id_medico = models.ForeignKey('Usuario', models.DO_NOTHING, db_column='id_medico')
+    #id = models.IntegerField()
     id_horario = models.ForeignKey('HorariosOcupados', models.DO_NOTHING, db_column='id_horario')
     id_paciente = models.ForeignKey('Paciente', models.DO_NOTHING, db_column='id_paciente')
     fecha = models.DateField()

@@ -28,9 +28,14 @@ def update(request, pk):
     try:
         if (request.method == "POST" and request.is_ajax()):
             consulta = get_object_or_404(Consultas, id_medico=gf.findUser(request.user.username), id=pk)
-            form = ExpedienteForm(request.POST or None, instance=consulta)
+            form = ExpedienteForm(request.POST, instance=consulta)
             if form.is_valid():
-                form.save()
+                consulta = form.save(commit=False)
+                if consulta.id_paciente.fecha_nac:
+                    consulta.edad_paciente = service.calculate_age(consulta.id_paciente.fecha_nac)
+                #if consulta.talla and consulta.peso:
+                    #consulta.imc = service.calculate_imc(consulta.talla, consulta.peso)
+                consulta.save()
             else:
                 log.error(form.errors)
                 return JsonResponse({'msg': 'Existe un campo que posee un valor incorrecto<br>' + str(form.errors), 'type': 'error'})
