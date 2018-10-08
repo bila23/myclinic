@@ -1,0 +1,36 @@
+<div class="row" style="margin-bottom:18px">
+    <div class="col-6">
+        <label for="especialidad_ref">Especialidad *:</label>
+        <input type="text" class="form-control" id="id_especialidad_ref" name="especialidad_ref" placeholder="Especialidad del m&eacute;dico"/>
+    </div>
+    <div class="col-6">
+        <label for="medico_ref">Nombre del m&eacute;dico *:</label>
+        <input type="text" class="form-control" id="id_medico_ref" name="medico_ref" placeholder="Nombre del m&eacute;dico"/>
+    </div>
+</div>
+<div class="form-group">
+    <label for="problema_ref">Definici&oacute;n de problema *:</label>
+    <textarea id="id_problema_ref" class="form-control" placeholder="Escriba los diagn&oacute;sticos por los cuales genera la referencia" name="problema_ref"></textarea>
+</div>
+<div class="form-group">
+    <label for="analisis_ref">An&aacute;lisis o raz&oacute;n por la que se hace la referencia *:</label>
+    <textarea id="id_analisis_ref" class="form-control" placeholder="An&aacute;lisis de la referencia" name="analisis_ref"></textarea>
+</div>
+<div class="form-group">
+    <button type="button" class="btn-g" id="ref_btn" onclick="save_ref()">Guardar</button>
+</div>
+<div class="form-group">
+    <div class="table-responsive">
+        <table class="table table-bordered table-hover">
+            <thead>
+                <tr>
+                    <th scope="col">M&eacute;dico</th>
+                    <th scope="col">Problema</th>
+                    <th scope="col">An&aacute;lisis</th>
+                </tr>
+                <tbody style="background:#fff" id="tb_ref">
+                </tbody>
+            </thead>
+        </table>
+    </div>
+</div>

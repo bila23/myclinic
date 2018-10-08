@@ -387,20 +387,20 @@ class HorariosOcupados(models.Model):
 
 
 class Referencias(models.Model):
-    id_medico = models.ForeignKey(Consultas, models.DO_NOTHING, db_column='id_medico', primary_key=True)
+    id_medico = models.ForeignKey('Usuario', models.DO_NOTHING, db_column='id_medico')
     id_consulta = models.IntegerField()
-    id = models.IntegerField()
-    problema = models.CharField(max_length=5000, blank=True, null=True)
-    analisis = models.CharField(max_length=5000, blank=True, null=True)
-    medico = models.CharField(max_length=5000, blank=True, null=True)
-    especialidad = models.CharField(max_length=2000, blank=True, null=True)
+    #id = models.IntegerField(primary_key=True)
+    problema_ref = models.CharField(max_length=5000, blank=True, null=True)
+    analisis_ref = models.CharField(max_length=5000, blank=True, null=True)
+    medico_ref = models.CharField(max_length=5000, blank=True, null=True)
+    especialidad_ref = models.CharField(max_length=2000, blank=True, null=True)
     usuario_crea = models.CharField(max_length=15, blank=True, null=True)
     fec_crea = models.DateTimeField(blank=True, null=True)
 
     class Meta:
         managed = False
         db_table = 'referencias'
-        unique_together = (('id_medico', 'id_consulta', 'id'),)
+        #unique_together = (('id_medico', 'id_consulta', 'id'),)
 
 
 class UsuarioErrores(models.Model):

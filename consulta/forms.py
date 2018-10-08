@@ -1,5 +1,5 @@
 from django import forms
-from core.models import Consultas
+from core.models import Consultas, Referencias
 
 class ExpedienteForm(forms.ModelForm):
     class Meta:

@@ -1,7 +1,9 @@
-from core.models import HorariosOcupados, Consultas
+from core.models import HorariosOcupados, Consultas, Referencias
 import core.generalFunction as gf
 import datetime
 from django.db.models import Max
+from django.core import serializers
+from decimal import Decimal
 
 def recover_consulta(pk, user):
     consulta_recover = None
@@ -48,5 +50,21 @@ def calculate_age(date):
 
 
 def calculate_imc(talla, peso):
-    peso_kg = peso * 0.45
+    peso_kg = Decimal(peso) * Decimal(0.45)
     return round(peso_kg / (talla * talla), 2)
+
+def find_ref_query(pk, user):
+    ref_list = Referencias.objects.filter(id_medico=user, id_consulta=pk).order_by('especialidad_ref', 'medico_ref')
+    return serializers.serialize('json', ref_list)
+
+def save_ref(esp, med, pro, ana, id, user, usr):
+    model = Referencias()
+    model.problema_ref = pro
+    model.especialidad_ref = esp
+    model.medico_ref = med
+    model.analisis_ref = ana
+    model.id_consulta = id
+    model.id_medico = user
+    model.usuario_crea = usr
+    model.fec_crea = datetime.datetime.now()
+    model.save(force_insert=True)

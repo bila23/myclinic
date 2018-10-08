@@ -4,7 +4,7 @@ from django.http import JsonResponse
 import core.generalFunction as gf
 from django.core import serializers
 from django.db.models import Max
-from core.models import Consultas
+from core.models import Consultas, Referencias
 from .forms import ExpedienteForm
 import consulta.service as service
 import logging
@@ -33,8 +33,8 @@ def update(request, pk):
                 consulta = form.save(commit=False)
                 if consulta.id_paciente.fecha_nac:
                     consulta.edad_paciente = service.calculate_age(consulta.id_paciente.fecha_nac)
-                #if consulta.talla and consulta.peso:
-                    #consulta.imc = service.calculate_imc(consulta.talla, consulta.peso)
+                if consulta.talla and consulta.peso:
+                    consulta.imc = service.calculate_imc(consulta.talla, consulta.peso)
                 consulta.save()
             else:
                 log.error(form.errors)
@@ -43,3 +43,28 @@ def update(request, pk):
     except Exception as inst:
         log.error(inst)
         return JsonResponse({'msg': 'Ha ocurrido un error al tratar de guardar la consulta', 'type': 'error'})
+
+@login_required
+def find_ref(request, pk):
+    try:
+        if(request.method == 'POST' and request.is_ajax()):
+            data = service.find_ref_query(pk, gf.findUser(request.user.username))
+            return JsonResponse({'ref_list': data, 'type': 'success'})
+    except Exception as inst:
+        log.error(inst)
+        return JsonResponse({'msg': 'Ha ocurrido un error al momento de recuperar las referencias m&eacute;dicas', 'type': 'error'})
+
+@login_required
+def save_ref(request):
+    try:
+        esp = request.POST.get('esp')
+        med = request.POST.get('med')
+        pro = request.POST.get('pro')
+        ana = request.POST.get('ana')
+        id = request.POST.get('id')
+        service.save_ref(esp, med, pro, ana, id, gf.findUser(request.user.username))
+        data = service.find_ref_query(id, gf.findUser(request.user.username), request.user.username)
+        return JsonResponse({'ref_list': data, 'type': 'success', 'msg': 'Se ha guardado correctamente la referencia'})
+    except Exception as inst:
+        log.error(inst)
+        return JsonResponse({'msg': 'Ha ocurrido un error al momento de guardar la referencia m&eacute;dica', 'type': 'error'})
