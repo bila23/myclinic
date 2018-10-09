@@ -27,10 +27,23 @@
                     <th scope="col">M&eacute;dico</th>
                     <th scope="col">Problema</th>
                     <th scope="col">An&aacute;lisis</th>
+                    <th scope="col">Acci&oacute;n</th>
                 </tr>
                 <tbody style="background:#fff" id="tb_ref">
                 </tbody>
             </thead>
         </table>
+    </div>
+</div>
+<div class="modal fade" id="del_ref_div" tabindex="-1" role="dialog" aria-labelledby="deltp" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content">
+            <div class="modal-body" id="del_div_ref_body"></div>
+            <div style="padding-bottom: 10px;padding-right: 15px;text-align: right;">
+                <input type="hidden" id="id_ref_del"/>
+                <button type="button" class="btn btn-primary" onclick="del_ref_svr()" style="margin-right:10px">Si</button>
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">No</button>
+            </div>
+        </div>
     </div>
 </div>

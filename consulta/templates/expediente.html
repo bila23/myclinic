@@ -61,6 +61,29 @@
 {% block javascript %}
 {% compress js inline%}
 <script>
+    function del_ref_svr(){
+        var param = {id_ref: $('#id_ref_del').val(), id_consulta: '{{consulta.id}}', csrfmiddlewaretoken: '{{ csrf_token }}'};
+        $.ajax({
+            type: 'POST',
+            url: '{% url 'delete_ref' %}',
+            data: param,
+            dataType: 'json'
+        }).done(function(data){
+            $('#del_ref_div').modal('hide');
+            if(data.type == 'success'){
+                $('#msg_form').addClass('alert alert-success');
+                find_ref();
+            }else if(data.type == 'error')
+                $('#msg_form').addClass('alert alert-danger');
+            $('#msg_form').empty().append(data.msg);
+            $('#msg_form').show();
+        });
+    }
+    function del_ref(id){
+        $('#del_div_ref_body').empty().append('¿Esta seguro que desea eliminar la referencia m&eacute;dica?');
+        $('#del_ref_div').modal();
+        $('#id_ref_del').val(id);
+    }
     function save_ref(){
         inputs = ['id_especialidad_ref', 'id_medico_ref', 'id_problema_ref', 'id_analisis_ref'];
 		reset_validate_form(inputs);
@@ -124,10 +147,10 @@
                 var size = row.length;
                 if (size > 0) {
                     for (i = 0; i < size; i++) {
-                        tr += '<tr><td>' + row[i].fields.especialidad_ref + ' - ' + row[i].fields.medico_ref + '</td><td>' + row[i].fields.problema_ref + '</td><td>' + row[i].fields.analisis_ref + '</td></tr>';
+                        tr += '<tr><td>' + row[i].fields.especialidad_ref + ' - ' + row[i].fields.medico_ref + '</td><td>' + row[i].fields.problema_ref + '</td><td>' + row[i].fields.analisis_ref + '</td><td><a href="javascript:del_ref(' + row[i].pk+ ')">Eliminar</a></td></tr>';
                     }
                 }else
-                    tr = '<tr><td colspan="3" class="text-center">No hay referencias registradas a esta consulta</td></tr>';
+                    tr = '<tr><td colspan="4" class="text-center">No hay referencias registradas a esta consulta</td></tr>';
                 $('#tb_ref').html(tr);
             }else if(data.type == 'error'){
                 $('#msg_form').addClass('alert alert-danger');

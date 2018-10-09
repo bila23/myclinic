@@ -62,9 +62,22 @@ def save_ref(request):
         pro = request.POST.get('pro')
         ana = request.POST.get('ana')
         id = request.POST.get('id')
-        service.save_ref(esp, med, pro, ana, id, gf.findUser(request.user.username))
-        data = service.find_ref_query(id, gf.findUser(request.user.username), request.user.username)
+        service.save_ref(esp, med, pro, ana, id, gf.findUser(request.user.username), request.user.username)
+        data = service.find_ref_query(id, gf.findUser(request.user.username))
         return JsonResponse({'ref_list': data, 'type': 'success', 'msg': 'Se ha guardado correctamente la referencia'})
     except Exception as inst:
         log.error(inst)
         return JsonResponse({'msg': 'Ha ocurrido un error al momento de guardar la referencia m&eacute;dica', 'type': 'error'})
+
+@login_required
+def delete_ref(request):
+    try:
+        id_ref = request.POST.get('id_ref')
+        id_consulta = request.POST.get('id_consulta')
+        model = get_object_or_404(Referencias, id = id_ref)
+        model.delete()
+        data = service.find_ref_query(id_consulta, gf.findUser(request.user.username))
+        return JsonResponse({'ref_list': data, 'type': 'success', 'msg': 'Se ha eliminado correctamente la referencia'})
+    except Exception as inst:
+        log.error(inst)
+        return JsonResponse({'type': 'error', 'msg': 'Ha ocurrido un erro al tratar de eliminar la referencia'})
