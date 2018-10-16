@@ -47,3 +47,40 @@
         </div>
     </div>
 </div>
+<div class="modal fade" id="updt_ref_div" tabindex="-1" role="dialog" aria-labelledby="up_ref_tp" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Actualizaci&oacute;n de referencia m&eacute;dica</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="form-group">
+                    <label for="problema_ref">Especialidad m&eacute;dica *:</label>
+                    <textarea id="id_especialidad_ref_updt" class="form-control" name="id_especialidad_ref_updt"></textarea>
+                </div>
+                <div class="form-group">
+                    <label for="problema_ref">Nombre del m&eacute;dico *:</label>
+                    <textarea id="id_medico_ref_updt" class="form-control" name="id_medico_updt"></textarea>
+                </div>
+                <div class="form-group">
+                    <label for="problema_ref">Definici&oacute;n de problema *:</label>
+                    <textarea id="id_problema_ref_updt" class="form-control" name="problema_ref_updt"></textarea>
+                </div>
+                <div class="form-group">
+                    <label for="analisis_ref">An&aacute;lisis o raz&oacute;n por la que se hace la referencia *:</label>
+                    <textarea id="id_analisis_ref_updt" class="form-control" name="analisis_ref_updt"></textarea>
+                </div>
+                <div class="form-group">
+                    <input type="hidden" name="id_ref_updt" id="id_ref_updt"/>
+                    <button type="button" class="btn btn-primary" id="ref_btn" onclick="update_ref()">Actualizar</button>
+                </div>
+                <div class="form-group">
+                    <div id="msg_update_ref"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

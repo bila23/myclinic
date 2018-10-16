@@ -8,6 +8,7 @@ from core.models import Consultas, Referencias
 from .forms import ExpedienteForm
 import consulta.service as service
 import logging
+from django.db import connection
 
 log = logging.getLogger(__name__)
 
@@ -80,4 +81,35 @@ def delete_ref(request):
         return JsonResponse({'ref_list': data, 'type': 'success', 'msg': 'Se ha eliminado correctamente la referencia'})
     except Exception as inst:
         log.error(inst)
-        return JsonResponse({'type': 'error', 'msg': 'Ha ocurrido un erro al tratar de eliminar la referencia'})
+        return JsonResponse({'type': 'error', 'msg': 'Ha ocurrido un error al tratar de eliminar la referencia'})
+
+@login_required
+def get_by_key(request):
+    try:
+        if(request.method == 'POST' and request.is_ajax()):
+            pk = request.POST.get('pk')
+            model = get_object_or_404(Referencias, id = pk)
+            array_result = serializers.serialize('json', [model], ensure_ascii = False)
+            obj = array_result[1:-1]
+            return JsonResponse({'ref_single': obj, 'type': 'success'})
+    except Exception as inst:
+        log.error(inst)
+        return JsonResponse({'type': 'error', 'msg': 'Ha ocurrido un error al tratar de recuperar la referencia que desea modificar'})
+
+@login_required
+def update_ref(request):
+    try:
+        if(request.method == 'POST' and request.is_ajax()):
+            id_ref = request.POST.get('id_ref')
+            print(id_ref)
+            model = get_object_or_404(Referencias, id = id_ref)
+            model.problema_ref = request.POST.get('pro')
+            model.analisis_ref = request.POST.get('ana')
+            model.medico_ref = request.POST.get('med')
+            model.especialidad_ref = request.POST.get('esp')
+            model.save()
+            data = service.find_ref_query(model.id_consulta, gf.findUser(request.user.username))
+            return JsonResponse({'ref_list': data, 'type':'success', 'msg': 'Se ha actualizado correctamente la referencia'})
+    except Exception as inst:
+        log.error(inst)
+        return JsonResponse({'type': 'error', 'msg': 'Ha ocurrido un error al tratar de actualizar la referencia'});

@@ -367,6 +367,11 @@
 			$('#msg_form').append('<span> - ' + msg + '</span><br/>');
 			$('#' + id_input).css('border-color', '#721c24');   
           }
+          function val_input_danger_div(msg, id_input, div){
+			$('#' + div).addClass('alert alert-danger');
+			$('#' + div).append('<span> - ' + msg + '</span><br/>');
+			$('#' + id_input).css('border-color', '#721c24');   
+          }
 
           function reset_validate_form(inputs){
             $('#msg_form').empty();

@@ -8,4 +8,6 @@ urlpatterns = [
     url('expediente/ref/(?P<pk>\d+)/$', views.find_ref, name="find_ref"),
     url('expediente/save/ref/', views.save_ref, name="save_ref"),
     url('expediente/delete/ref/', views.delete_ref, name="delete_ref"),
+    url('expediente/read/ref/', views.get_by_key, name="get_by_key_ref"),
+    url('expediente/update/ref/', views.update_ref, name="update_ref"),
 ]
