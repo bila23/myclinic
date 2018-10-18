@@ -1,4 +1,4 @@
-from core.models import HorariosOcupados, Consultas, Referencias
+from core.models import HorariosOcupados, Consultas, Referencias, ConsultasMed
 import core.generalFunction as gf
 import datetime
 from django.db.models import Max
@@ -66,5 +66,20 @@ def save_ref(esp, med, pro, ana, id, user, usr):
     model.id_consulta = id
     model.id_medico = user
     model.usuario_crea = usr
+    model.fec_crea = datetime.datetime.now()
+    model.save(force_insert=True)
+
+def find_med_query(pk, user):
+    med_list = ConsultasMed.objects.filter(id_medico=user, id_consulta=pk).order_by('nombre_medicamento')
+    return serializers.serialize('json', med_list)
+
+def save_med(med, can, fus, id_medico, user, id_consulta):
+    model = ConsultasMed()
+    model.nombre_medicamento = med
+    model.cantidad = can
+    model.forma_uso = fus
+    model.id_medico = id_medico
+    model.id_consulta = id_consulta
+    model.usuario_crea = user
     model.fec_crea = datetime.datetime.now()
     model.save(force_insert=True)

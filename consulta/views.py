@@ -4,7 +4,7 @@ from django.http import JsonResponse
 import core.generalFunction as gf
 from django.core import serializers
 from django.db.models import Max
-from core.models import Consultas, Referencias
+from core.models import Consultas, Referencias, ConsultasMed
 from .forms import ExpedienteForm
 import consulta.service as service
 import logging
@@ -101,7 +101,6 @@ def update_ref(request):
     try:
         if(request.method == 'POST' and request.is_ajax()):
             id_ref = request.POST.get('id_ref')
-            print(id_ref)
             model = get_object_or_404(Referencias, id = id_ref)
             model.problema_ref = request.POST.get('pro')
             model.analisis_ref = request.POST.get('ana')
@@ -112,4 +111,36 @@ def update_ref(request):
             return JsonResponse({'ref_list': data, 'type':'success', 'msg': 'Se ha actualizado correctamente la referencia'})
     except Exception as inst:
         log.error(inst)
-        return JsonResponse({'type': 'error', 'msg': 'Ha ocurrido un error al tratar de actualizar la referencia'});
+        return JsonResponse({'type': 'error', 'msg': 'Ha ocurrido un error al tratar de actualizar la referencia'})
+
+@login_required
+def find_med(request, pk):
+    try:
+        if(request.method == 'POST' and request.is_ajax()):
+            med_list = service.find_med_query(pk, gf.findUser(request.user.username))
+            return JsonResponse({'med_list': med_list, 'type': 'success'})
+    except Exception as inst:
+        log.error(inst)
+        return JsonResponse({'type': 'error', 'msg': 'Ha ocurrido un error al tratar de recuperar los medicamentos otorgados'})
+
+@login_required
+def save_med(request):
+    try:
+        if(request.method == 'POST' and request.is_ajax()):
+            user = request.user.username
+            service.save_med(request.POST.get('nom'), request.POST.get('can'), request.POST.get('fus'), gf.findUser(user), user, request.POST.get('id_consulta'))
+            return JsonResponse({'type': 'success', 'msg': 'Se ha guardado correctamente el medicamento'})
+    except Exception as inst:
+        log.error(inst)
+        return JsonResponse({'type': 'error', 'msg': 'Ha ocurrido un error al tratar de guardar un medicamento'})
+
+@login_required
+def delete_med(request):
+    try:
+        if(request.method == 'POST' and request.is_ajax()):
+            model = get_object_or_404(ConsultasMed, id = request.POST.get('id_med'))
+            model.delete()
+            return JsonResponse({'type': 'success', 'msg': 'Se ha eliminado correctamente el medicamento'})
+    except Exception as inst:
+        log.error(inst)
+        return JsonResponse({'type': 'error', 'msg': 'Ha ocurrido un error al tratar de eliminar el medicamento'})

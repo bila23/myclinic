@@ -39,18 +39,6 @@ class Usuario(models.Model):
         db_table = 'usuario'
 
 
-class Medicamentos(models.Model):
-    nombre_comercial = models.CharField(max_length=2000, blank=True, null=True)
-    usuario_crea = models.CharField(max_length=15, blank=True, null=True)
-    fec_crea = models.DateTimeField(blank=True, null=True)
-    estado = models.CharField(max_length=1, blank=True, null=True)
-    nombre_generico = models.CharField(max_length=2000, blank=True, null=True)
-
-    class Meta:
-        managed = False
-        db_table = 'medicamentos'
-
-
 class MedicoEspecialidad(models.Model):
     id_especialidad = models.ForeignKey(EspecialidadesMedicas, models.DO_NOTHING, db_column='id_especialidad', primary_key=True)
     id_usuario = models.ForeignKey('Usuario', models.DO_NOTHING, db_column='id_usuario')
@@ -234,9 +222,9 @@ class ConsultasDiag(models.Model):
 
 
 class ConsultasMed(models.Model):
-    id_medico = models.ForeignKey(Consultas, models.DO_NOTHING, db_column='id_medico', primary_key=True)
+    id_medico = models.ForeignKey('Usuario', models.DO_NOTHING, db_column='id_medico')
     id_consulta = models.IntegerField()
-    id_med = models.ForeignKey('Medicamentos', models.DO_NOTHING, db_column='id_med')
+    nombre_medicamento = models.CharField(max_length=3000, blank=True, null=True)
     cantidad = models.CharField(max_length=200, blank=True, null=True)
     forma_uso = models.CharField(max_length=3000, blank=True, null=True)
     usuario_crea = models.CharField(max_length=15, blank=True, null=True)
@@ -246,7 +234,7 @@ class ConsultasMed(models.Model):
     class Meta:
         managed = False
         db_table = 'consultas_med'
-        unique_together = (('id_medico', 'id_consulta', 'id_med'),)
+        #unique_together = (('id_medico', 'id_consulta'),)
 
 
 class ContadorConsultas(models.Model):

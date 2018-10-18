@@ -1,0 +1,45 @@
+<div class="form-group" style="margin-bottom:18px">
+    <label for="nombre_medicamento">Nombre del medicamento *:</label>
+    <input type="text" id="nombre_medicamento" class="form-control" placeholder="Escriba el nombre del medicamento" name="nombre_medicamento"/>
+</div>
+<div class="row">
+    <div class="col-6">
+        <label for="cantidad">Cantidad *:</label>
+        <input type="text" class="form-control" id="cantidad" name="cantidad" placeholder="Cantidad de medicamento otorgado"/>
+    </div>
+    <div class="col-6">
+        <label for="forma_uso">Forma de uso *:</label>
+        <input type="text" class="form-control" id="forma_uso" name="forma_uso" placeholder="Defina la forma de uso"/>
+    </div>
+</div>
+<div class="form-group">
+    <button type="button" class="btn-g" id="med_btn" onclick="med_save()">Guardar</button>
+</div>
+<div class="form-group">
+    <div class="table-responsive">
+        <table class="table table-bordered table-hover">
+            <thead>
+                <tr>
+                    <th scope="col">Medicamento</th>
+                    <th scope="col">Cantidad</th>
+                    <th scope="col">Forma de uso</th>
+                    <th scope="col">Acci&oacute;n</th>
+                </tr>
+                <tbody style="background:#fff" id="tb_med">
+                </tbody>
+            </thead>
+        </table>
+    </div>
+</div>
+<div class="modal fade" id="del_med_div" tabindex="-1" role="dialog" aria-labelledby="del_med_tp" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content">
+            <div class="modal-body" id="del_div_med_body"></div>
+            <div style="padding-bottom: 10px;padding-right: 15px;text-align: right;">
+                <input type="hidden" id="id_med_del"/>
+                <button type="button" class="btn btn-primary" onclick="del_med_svr()" style="margin-right:10px">Si</button>
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">No</button>
+            </div>
+        </div>
+    </div>
+</div>
