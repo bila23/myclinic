@@ -128,8 +128,11 @@ def save_med(request):
     try:
         if(request.method == 'POST' and request.is_ajax()):
             user = request.user.username
-            service.save_med(request.POST.get('nom'), request.POST.get('can'), request.POST.get('fus'), gf.findUser(user), user, request.POST.get('id_consulta'))
-            return JsonResponse({'type': 'success', 'msg': 'Se ha guardado correctamente el medicamento'})
+            id_doctor = gf.findUser(user)
+            pk = request.POST.get('id_consulta')
+            service.save_med(request.POST.get('nom'), request.POST.get('can'), request.POST.get('fus'), id_doctor, user, pk)
+            med_list = service.find_med_query(pk, id_doctor)
+            return JsonResponse({'med_list': med_list, 'type': 'success', 'msg': 'Se ha guardado correctamente el medicamento'})
     except Exception as inst:
         log.error(inst)
         return JsonResponse({'type': 'error', 'msg': 'Ha ocurrido un error al tratar de guardar un medicamento'})
@@ -139,8 +142,38 @@ def delete_med(request):
     try:
         if(request.method == 'POST' and request.is_ajax()):
             model = get_object_or_404(ConsultasMed, id = request.POST.get('id_med'))
+            pk = model.id_consulta
             model.delete()
-            return JsonResponse({'type': 'success', 'msg': 'Se ha eliminado correctamente el medicamento'})
+            med_list = service.find_med_query(pk, gf.findUser(request.user.username))
+            return JsonResponse({'med_list': med_list, 'type': 'success', 'msg': 'Se ha eliminado correctamente el medicamento'})
     except Exception as inst:
         log.error(inst)
         return JsonResponse({'type': 'error', 'msg': 'Ha ocurrido un error al tratar de eliminar el medicamento'})
+
+@login_required
+def get_by_key_med(request):
+    try:
+        if(request.method == 'POST' and request.is_ajax()):
+            pk = request.POST.get('pk')
+            model = get_object_or_404(ConsultasMed, id = pk)
+            array_result = serializers.serialize('json', [model], ensure_ascii = False)
+            obj = array_result[1:-1]
+            return JsonResponse({'ref_single': obj, 'type': 'success'})
+    except Exception as inst:
+        log.error(inst)
+        return JsonResponse({'type': 'error', 'msg': 'Ha ocurrido un error al tratar de recuperar el medicamento que desea modificar'})
+
+@login_required
+def update_med(request):
+    try:
+        if(request.method == 'POST' and request.is_ajax()):
+            model = get_object_or_404(ConsultasMed, id = request.POST.get('id_med'))
+            model.nombre_medicamento = request.POST.get('nom')
+            model.cantidad = request.POST.get('can')
+            model.forma_uso = request.POST.get('fum')
+            model.save(force_update=True)
+            med_list = service.find_med_query(model.id_consulta, gf.findUser(request.user.username))
+            return JsonResponse({'med_list': med_list, 'type': 'success', 'msg': 'Se ha actualizado correctamente el medicamento'})
+    except Exception as inst:
+        log.error(inst)
+        return JsonResponse({'type': 'error', 'msg': 'Ha ocurrido un error al momento de actualizar el medicamento'})

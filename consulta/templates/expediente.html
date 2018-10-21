@@ -64,6 +64,98 @@
 {% block javascript %}
 {% compress js inline%}
 <script>
+    function update_med(){
+        inputs = ['nombre_medicamento_updt', 'cantidad_updt', 'forma_uso_updt'];
+        reset_validate_form(inputs);
+        $('#msg_update_med').empty();
+        var nom = $('#nombre_medicamento_updt').val();
+        var can = $('#cantidad_updt').val();
+        var fum = $('#forma_uso_updt').val();
+        flag = true;
+        div_med = 'msg_update_med';
+        if(nom == ''){
+            val_input_danger_div('Debe ingresar el nombre del medicamento', 'nombre_medicamento_updt', div_med);
+            flag = false;
+        }
+        if(can == ''){
+            val_input_danger_div('Debe ingresar la cantidad de medicamento', 'cantidad_updt', div_med);
+            flag = false;
+        }
+        if(fum == ''){
+            val_input_danger_div('Debe definir la forma de uso del medicamento', 'forma_uso_updt', div_med);
+            flag = false;
+        }
+        if(flag){
+            $.ajax({
+                type: 'POST',
+                url: '{% url "update_med" %}',
+                data:{
+                    nom: nom,
+                    can: can,
+                    fum: fum,
+                    id: '{{consulta.id}}',
+                    id_med: $('#id_med_updt').val(),
+                    csrfmiddlewaretoken: '{{ csrf_token }}'
+                }
+            }).done(function (data){
+                if(data.type == 'success'){
+                    $('#msg_update_med').removeClass('alert alert-danger');
+                    $('#msg_update_med').addClass('alert alert-success');
+                    med_get_list(data);
+                }else if(data.type == 'error'){
+                    $('#msg_update_med').removeClass('alert alert-success');
+                    $('#msg_update_med').addClass('alert alert-danger');
+                }
+                $('#msg_update_med').show();
+                $('#msg_update_med').empty().append(data.msg);
+            });
+        }else
+            $('#msg_update_med').show();
+    }
+    function get_by_key_med(id){
+        $('#msg_form').hide();
+        $('#msg_update_med').hide();
+        $.ajax({
+            type: 'POST',
+            url: '{% url "get_by_key_med" %}',
+            data:{
+                csrfmiddlewaretoken: '{{ csrf_token }}',
+                pk: id
+            }
+        }).done(function (data){
+            if(data.type == 'success'){
+                row = jQuery.parseJSON(data.ref_single);
+                $('#nombre_medicamento_updt').val(row.fields.nombre_medicamento);
+                $('#cantidad_updt').val(row.fields.cantidad);
+                $('#forma_uso_updt').val(row.fields.forma_uso);
+                $('#id_med_updt').val(row.pk);
+                $('#updt_med_div').modal();
+            }else if(data.type == 'error'){
+                $('#msg_form').addClass('alert alert-danger');
+                $('#msg_form').empty().append(data.msg);
+                $('#msg_form').show();
+            }
+        });
+    }
+    function med_get_list(data){
+        if(data.type == 'success'){
+            row = jQuery.parseJSON(data.med_list);
+            $('#tb_med').empty();
+            var tr = ''
+            var size = row.length;
+            if (size > 0) {
+                for (i = 0; i < size; i++) {
+                    tr += '<tr><td>' + row[i].fields.nombre_medicamento + '</td><td>' + row[i].fields.cantidad + '</td><td>' + row[i].fields.forma_uso + '</td><td><a href="javascript:get_by_key_med(' + row[i].pk+ ')">Modificar</a> - <a href="javascript:del_med(' + row[i].pk+ ')">Eliminar</a></td></tr>';
+                }
+            }else
+                tr = '<tr><td colspan="4" class="text-center">No hay registro de medicamentos otorgados para esta consulta</td></tr>';
+            $('#tb_med').html(tr);
+        }else if(data.type == 'error'){
+            $('#msg_form').addClass('alert alert-danger');
+            $('#msg_form').empty().append(data.msg);
+            $('#msg_form').show();
+        }
+    }
     function med_query(){
         $.ajax({
             type: 'POST',
@@ -72,23 +164,7 @@
                 csrfmiddlewaretoken: '{{ csrf_token }}'
             }
         }).done(function (data){
-            if(data.type == 'success'){
-                row = jQuery.parseJSON(data.med_list);
-                $('#tb_med').empty();
-                var tr = ''
-                var size = row.length;
-                if (size > 0) {
-                    for (i = 0; i < size; i++) {
-                        tr += '<tr><td>' + row[i].fields.nombre_medicamento + '</td><td>' + row[i].fields.cantidad + '</td><td>' + row[i].fields.forma_uso + '</td><td><a href="javascript:get_by_key_ref(' + row[i].pk+ ')">Modificar</a> - <a href="javascript:del_med(' + row[i].pk+ ')">Eliminar</a></td></tr>';
-                    }
-                }else
-                    tr = '<tr><td colspan="4" class="text-center">No hay registro de medicamentos otorgados para esta consulta</td></tr>';
-                $('#tb_med').html(tr);
-            }else if(data.type == 'error'){
-                $('#msg_form').addClass('alert alert-danger');
-                $('#msg_form').empty().append(data.msg);
-                $('#msg_form').show();
-            }
+            med_get_list(data);
         });
         hide_msg();
     }
@@ -125,7 +201,7 @@
 			}).done(function (data){
 				if(data.type == 'success'){
                     $('#msg_form').addClass('alert alert-success');
-                    med_query();
+                    med_get_list(data);
 				}else if(data.type == 'error')
 					$('#msg_form').addClass('alert alert-danger');
                 $('#msg_form').empty().append(data.msg);
@@ -136,7 +212,8 @@
     }
     function update_ref(){
         inputs = ['id_especialidad_ref_updt', 'id_medico_ref_updt', 'id_problema_ref_updt', 'id_analisis_ref_updt'];
-		reset_validate_form(inputs);
+        reset_validate_form(inputs);
+        $('#msg_update_ref').empty();
         var esp = $('#id_especialidad_ref_updt').val();
         var med = $('#id_medico_ref_updt').val();
         var pro = $('#id_problema_ref_updt').val();
@@ -174,14 +251,18 @@
                 }
             }).done(function (data){
 				if(data.type == 'success'){
+                    $('#msg_update_ref').removeClass('alert alert-danger');
                     $('#msg_update_ref').addClass('alert alert-success');
                     find_ref();
-				}else if(data.type == 'error')
-					$('#msg_update_ref').addClass('alert alert-danger');
+				}else if(data.type == 'error'){
+                    $('#msg_update_ref').removeClass('alert alert-success');
+                    $('#msg_update_ref').addClass('alert alert-danger');
+                }
                 $('#msg_update_ref').empty().append(data.msg);
                 $('#msg_update_ref').show();
             });
-        }
+        }else
+            $('#msg_update_ref').show();
     }
 
     function del_med_svr(){
@@ -195,7 +276,7 @@
             $('#del_med_div').modal('hide');
             if(data.type == 'success'){
                 $('#msg_form').addClass('alert alert-success');
-                med_query();
+                med_get_list(data);
             }else if(data.type == 'error')
                 $('#msg_form').addClass('alert alert-danger');
             $('#msg_form').empty().append(data.msg);
@@ -340,15 +421,15 @@
     function hide_msg(){
         $('#msg_form').hide();
     }
-    /*$(function() {
-        $('#id_problema').val('{{consulta.problema | default_if_none:""}}')
+    $(function() {
+        $('#id_problema').val('{{consulta.problema | linebreaks | default_if_none:""}}');
         $('#id_diagnostico').val('{{consulta.diagnostico | default_if_none:""}}');
         $('#id_tratamiento').val('{{consulta.tratamiento | default_if_none:""}}');
         $('#id_recomendacion').val('{{consulta.recomendacion | default_if_none:""}}');
         $('#id_talla').val('{{consulta.talla | default_if_none:""}}');
         $('#id_peso').val('{{consulta.peso | default_if_none:""}}');
         $('#id_presion_art').val('{{consulta.presion_art | default_if_none:""}}');
-    });*/
+    });
     function save_form(){
         inputs = ['id_problema', 'id_diagnostico', 'id_tratamiento', 'id_talla', 'id_peso', 'id_presion_art'];
 		reset_validate_form(inputs);

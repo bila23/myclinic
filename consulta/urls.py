@@ -13,4 +13,6 @@ urlpatterns = [
     url('expediente/med/(?P<pk>\d+)/$', views.find_med, name="find_med"),
     url('expediente/med/save/', views.save_med, name="save_med"),
     url('expediente/med/delete/', views.delete_med, name="delete_med"),
+    url('expediente/med/get_by_key/', views.get_by_key_med, name="get_by_key_med"),
+    url('expediente/med/update/', views.update_med, name="update_med"),
 ]

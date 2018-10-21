@@ -43,3 +43,38 @@
         </div>
     </div>
 </div>
+<div class="modal fade" id="updt_med_div" tabindex="-1" role="dialog" aria-labelledby="up_med_tp" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Actualizaci&oacute;n de medicamentos</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="form-group">
+                    <label for="nombre_medicamento">Nombre del medicamento *:</label>
+                    <input type="text" id="nombre_medicamento_updt" class="form-control" name="nombre_medicamento_updt"/>
+                </div>
+                <div class="row">
+                    <div class="col-6">
+                        <label for="cantidad">Cantidad *:</label>
+                        <input type="text" class="form-control" id="cantidad_updt" name="cantidad_updt"/>
+                    </div>
+                    <div class="col-6">
+                        <label for="forma_uso">Forma de uso *:</label>
+                        <input type="text" class="form-control" id="forma_uso_updt" name="forma_uso_updt"/>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <input type="hidden" id="id_med_updt"/>
+                    <button type="button" class="btn-g" id="med_updt_btn" onclick="update_med()">Actualizar</button>
+                </div>
+                <div class="form-group">
+                    <div id="msg_update_med"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
