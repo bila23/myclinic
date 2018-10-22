@@ -542,7 +542,7 @@
             url: '{% url "find_ref" pk=consulta.id %}',
             data:{
                 csrfmiddlewaretoken: '{{ csrf_token }}'
-            } 
+            }
         }).done(function (data){
             if(data.type == 'success'){
                 row = jQuery.parseJSON(data.ref_list);
