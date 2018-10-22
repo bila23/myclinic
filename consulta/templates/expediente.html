@@ -37,7 +37,7 @@
             <a class="nav-link" id="pills-2-tab" data-toggle="pill" href="#pills-2" role="tab" aria-controls="pills-2" aria-selected="false" onclick="med_query()">Medicamentos</a>
         </li>
         <li class="nav-item">
-            <a class="nav-link" id="pills-3-tab" data-toggle="pill" href="#pills-3" role="tab" aria-controls="pills-3" aria-selected="false" onclick="hide_msg()">Examenes</a>
+            <a class="nav-link" id="pills-3-tab" data-toggle="pill" href="#pills-3" role="tab" aria-controls="pills-3" aria-selected="false" onclick="exa_query()">Examenes</a>
         </li>
         <li class="nav-item">
             <a class="nav-link" id="pills-4-tab" data-toggle="pill" href="#pills-4" role="tab" aria-controls="pills-4" aria-selected="false" onclick="find_ref()">Referencias</a>
@@ -53,7 +53,9 @@
         <div class="tab-pane fade" id="pills-2" role="tabpanel" aria-labelledby="pills-2-tab">
             {% include 'medicamentos.html' %}
         </div>
-        <div class="tab-pane fade" id="pills-3" role="tabpanel" aria-labelledby="pills-3-tab">...</div>
+        <div class="tab-pane fade" id="pills-3" role="tabpanel" aria-labelledby="pills-3-tab">
+            {% include 'examenes.html' %}
+        </div>
         <div class="tab-pane fade" id="pills-4" role="tabpanel" aria-labelledby="pills-4-tab">
             {% include 'referencias.html' %}
         </div>
@@ -64,6 +66,150 @@
 {% block javascript %}
 {% compress js inline%}
 <script>
+    function update_exa(){
+        inputs = ['examen_updt'];
+        reset_validate_form(inputs);
+        $('#msg_update_exa').empty();
+        var exa = $('#examen_updt').val();
+        flag = true;
+        div_exa = 'msg_update_exa';
+        if(exa == ''){
+            val_input_danger_div('Debe ingresar el nombre del ex&aacute;men', 'examen_updt', div_exa);
+            flag = false;
+        }
+        if(flag){
+            $.ajax({
+                type: 'POST',
+                url: '{% url "update_exa" %}',
+                data:{
+                    exa: exa,
+                    id: '{{consulta.id}}',
+                    id_exa: $('#id_exa_updt').val(),
+                    csrfmiddlewaretoken: '{{ csrf_token }}'
+                }
+            }).done(function (data){
+                if(data.type == 'success'){
+                    $('#msg_update_exa').removeClass('alert alert-danger');
+                    $('#msg_update_exa').addClass('alert alert-success');
+                    exa_get_list(data);
+                }else if(data.type == 'error'){
+                    $('#msg_update_exa').removeClass('alert alert-success');
+                    $('#msg_update_exa').addClass('alert alert-danger');
+                }
+                $('#msg_update_exa').show();
+                $('#msg_update_exa').empty().append(data.msg);
+            });
+        }else
+            $('#msg_update_exa').show();
+    }
+    function get_by_key_exa(id){
+        $('#msg_form').hide();
+        $('#msg_update_exa').hide();
+        $.ajax({
+            type: 'POST',
+            url: '{% url "get_by_key_exa" %}',
+            data:{
+                csrfmiddlewaretoken: '{{ csrf_token }}',
+                pk: id
+            }
+        }).done(function (data){
+            if(data.type == 'success'){
+                row = jQuery.parseJSON(data.exa_single);
+                $('#examen_updt').val(row.fields.examen);
+                $('#id_exa_updt').val(row.pk);
+                $('#updt_exa_div').modal();
+            }else if(data.type == 'error'){
+                $('#msg_form').addClass('alert alert-danger');
+                $('#msg_form').empty().append(data.msg);
+                $('#msg_form').show();
+            }
+        });
+    }
+    function del_exa_svr(){
+        var param = {id_exa: $('#id_exa_del').val(), csrfmiddlewaretoken: '{{ csrf_token }}'};
+        $.ajax({
+            type: 'POST',
+            url: '{% url 'delete_exa' %}',
+            data: param,
+            dataType: 'json'
+        }).done(function(data){
+            $('#del_exa_div').modal('hide');
+            if(data.type == 'success'){
+                $('#msg_form').addClass('alert alert-success');
+                exa_get_list(data);
+            }else if(data.type == 'error')
+                $('#msg_form').addClass('alert alert-danger');
+            $('#msg_form').empty().append(data.msg);
+            $('#msg_form').show();
+        });
+    }
+    function del_exa(id){
+        $('#msg_form').hide();
+        $('#del_div_exa_body').empty().append('¿Esta seguro que desea eliminar el ex&aacute;men?');
+        $('#del_exa_div').modal();
+        $('#id_exa_del').val(id);
+    }
+    function exa_save(){
+        inputs = ['examen'];
+        reset_validate_form(inputs);
+        var exa = $('#examen').val();
+        flag = true;
+        if(exa == ''){
+            val_input_danger('Debe ingresar el nombre del ex&aacute;men', 'examen');
+            flag = false;
+        }
+        if(flag){
+            $.ajax({
+                type: 'POST',
+                url: '{% url "save_exa" %}',
+                data:{
+                    exa: exa,
+                    id_consulta: '{{consulta.id}}',
+                    csrfmiddlewaretoken: '{{ csrf_token }}'
+                }
+            }).done(function (data){
+                if(data.type == 'success'){
+                    $('#msg_form').addClass('alert alert-success');
+                    exa_get_list(data);
+                }else if(data.type == 'error')
+                    $('#msg_form').addClass('alert alert-danger');
+                $('#msg_form').empty().append(data.msg);
+                $('#msg_form').show();
+            });
+        }else
+            $('#msg_form').show();
+    }
+    function exa_query(){
+        $.ajax({
+            type: 'POST',
+            url: '{% url "find_exa" pk=consulta.id %}',
+            data:{
+                csrfmiddlewaretoken: '{{ csrf_token }}'
+            }
+        }).done(function (data){
+            exa_get_list(data);
+        });
+        hide_msg();
+    }
+    function exa_get_list(data){
+        if(data.type == 'success'){
+            row = jQuery.parseJSON(data.exa_list);
+            $('#tb_exa').empty();
+            var tr = ''
+            var size = row.length;
+            if (size > 0) {
+                for (i = 0; i < size; i++) {
+                    tr += '<tr><td>' + row[i].fields.examen + '</td><td><a href="javascript:get_by_key_exa(' + row[i].pk+ ')">Modificar</a> - <a href="javascript:del_exa(' + row[i].pk+ ')">Eliminar</a></td></tr>';
+                }
+            }else
+                tr = '<tr><td colspan="2" class="text-center">No hay registro de ex&aacute;menes para esta consulta</td></tr>';
+            $('#tb_exa').html(tr);
+        }else if(data.type == 'error'){
+            $('#msg_form').addClass('alert alert-danger');
+            $('#msg_form').empty().append(data.msg);
+            $('#msg_form').show();
+        }
+    }
     function update_med(){
         inputs = ['nombre_medicamento_updt', 'cantidad_updt', 'forma_uso_updt'];
         reset_validate_form(inputs);
@@ -169,8 +315,8 @@
         hide_msg();
     }
     function med_save(){
-        inputs = ['nombre_medicamento', 'cantidad', 'forma_uso']
-        reset_validate_form(inputs)
+        inputs = ['nombre_medicamento', 'cantidad', 'forma_uso'];
+        reset_validate_form(inputs);
         var nom = $('#nombre_medicamento').val();
         var can = $('#cantidad').val();
         var fus = $('#forma_uso').val();

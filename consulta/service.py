@@ -1,4 +1,4 @@
-from core.models import HorariosOcupados, Consultas, Referencias, ConsultasMed
+from core.models import HorariosOcupados, Consultas, Referencias, ConsultasMed, ExamenesDiag
 import core.generalFunction as gf
 import datetime
 from django.db.models import Max
@@ -80,6 +80,19 @@ def save_med(med, can, fus, id_medico, user, id_consulta):
     model.forma_uso = fus
     model.id_medico = id_medico
     model.id_consulta = id_consulta
+    model.usuario_crea = user
+    model.fec_crea = datetime.datetime.now()
+    model.save(force_insert=True)
+
+def find_exa_query(pk, user):
+    exa_list = ExamenesDiag.objects.filter(id_medico=user, id_consulta=pk).order_by('examen')
+    return serializers.serialize('json', exa_list)
+
+def save_exa(examen, id_medico, user, id_consulta):
+    model = ExamenesDiag()
+    model.examen = examen
+    model.id_consulta = id_consulta
+    model.id_medico = id_medico
     model.usuario_crea = user
     model.fec_crea = datetime.datetime.now()
     model.save(force_insert=True)

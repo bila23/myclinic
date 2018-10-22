@@ -1,0 +1,58 @@
+<div class="form-group" style="margin-bottom:18px">
+    <label for="examen">Nombre del ex&aacute;men *:</label>
+    <input type="text" id="examen" class="form-control" placeholder="Escriba el nombre del ex&aacute;men" name="examen"/>
+</div>
+<div class="form-group">
+    <button type="button" class="btn-g" id="med_btn" onclick="exa_save()">Guardar</button>
+</div>
+<div class="form-group">
+    <div class="table-responsive">
+        <table class="table table-bordered table-hover">
+            <thead>
+                <tr>
+                    <th scope="col">Ex&aacute;men</th>
+                    <th scope="col">Acci&oacute;n</th>
+                </tr>
+                <tbody style="background:#fff" id="tb_exa">
+                </tbody>
+            </thead>
+        </table>
+    </div>
+</div>
+<div class="modal fade" id="del_exa_div" tabindex="-1" role="dialog" aria-labelledby="del_exa_tp" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content">
+            <div class="modal-body" id="del_div_exa_body"></div>
+            <div style="padding-bottom: 10px;padding-right: 15px;text-align: right;">
+                <input type="hidden" id="id_exa_del"/>
+                <button type="button" class="btn btn-primary" onclick="del_exa_svr()" style="margin-right:10px">Si</button>
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">No</button>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="modal fade" id="updt_exa_div" tabindex="-1" role="dialog" aria-labelledby="up_exa_tp" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Actualizaci&oacute;n de ex&aacute;men</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <div class="form-group">
+                        <label for="examen_updt">Nombre del ex&aacute;men *:</label>
+                        <input type="text" id="examen_updt" class="form-control" name="examen_updt"/>
+                    </div>
+                    <div class="form-group">
+                        <input type="hidden" id="id_exa_updt"/>
+                        <button type="button" class="btn-g" onclick="update_exa()">Actualizar</button>
+                    </div>
+                    <div class="form-group">
+                        <div id="msg_update_exa"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>

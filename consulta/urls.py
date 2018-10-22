@@ -15,4 +15,9 @@ urlpatterns = [
     url('expediente/med/delete/', views.delete_med, name="delete_med"),
     url('expediente/med/get_by_key/', views.get_by_key_med, name="get_by_key_med"),
     url('expediente/med/update/', views.update_med, name="update_med"),
+    url('expediente/exa/(?P<pk>\d+)/$', views.find_exa, name="find_exa"),
+    url('expediente/exa/save/', views.save_exa, name="save_exa"),
+    url('expediente/exa/delete/', views.delete_exa, name="delete_exa"),
+    url('expediente/exa/get_by_key/', views.get_by_key_exa, name="get_by_key_exa"),
+    url('expediente/exa/update/', views.update_exa, name="update_exa"),
 ]

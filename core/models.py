@@ -84,27 +84,6 @@ class Paciente(models.Model):
         db_table = 'paciente'
 
 
-class TipoDiag(models.Model):
-    nombre = models.CharField(max_length=3000, blank=True, null=True)
-    estado = models.CharField(max_length=1, blank=True, null=True)
-    fec_crea = models.DateTimeField(blank=True, null=True)
-    usuario_crea = models.CharField(max_length=15, blank=True, null=True)
-
-    class Meta:
-        managed = False
-        db_table = 'tipo_diag'
-
-
-class TipoExamenes(models.Model):
-    nombre = models.CharField(max_length=3000, blank=True, null=True)
-    usuario_crea = models.CharField(max_length=15, blank=True, null=True)
-    fec_crea = models.DateTimeField(blank=True, null=True)
-
-    class Meta:
-        managed = False
-        db_table = 'tipo_examenes'
-
-
 class AuditoriaInout(models.Model):
     usuario = models.CharField(max_length=15, blank=True, null=True)
     fecha = models.DateTimeField(blank=True, null=True)
@@ -208,19 +187,6 @@ class Consultas(models.Model):
         unique_together = (('id_medico', 'id'),)
 
 
-class ConsultasDiag(models.Model):
-    id_medico = models.ForeignKey(Consultas, models.DO_NOTHING, db_column='id_medico', primary_key=True)
-    id_consulta = models.IntegerField()
-    id_enf = models.ForeignKey('Diagnosticos', models.DO_NOTHING, db_column='id_enf')
-    usuario_crea = models.CharField(max_length=15, blank=True, null=True)
-    fec_crea = models.DateTimeField(blank=True, null=True)
-
-    class Meta:
-        managed = False
-        db_table = 'consultas_diag'
-        unique_together = (('id_medico', 'id_consulta', 'id_enf'),)
-
-
 class ConsultasMed(models.Model):
     id_medico = models.ForeignKey('Usuario', models.DO_NOTHING, db_column='id_medico')
     id_consulta = models.IntegerField()
@@ -235,37 +201,6 @@ class ConsultasMed(models.Model):
         managed = False
         db_table = 'consultas_med'
         #unique_together = (('id_medico', 'id_consulta'),)
-
-
-class ContadorConsultas(models.Model):
-    id_medico = models.ForeignKey('Usuario', models.DO_NOTHING, db_column='id_medico', primary_key=True)
-    valor = models.IntegerField(blank=True, null=True)
-
-    class Meta:
-        managed = False
-        db_table = 'contador_consultas'
-
-
-class ContadoresMedicos(models.Model):
-    tabla = models.CharField(primary_key=True, max_length=30)
-    valor = models.IntegerField(blank=True, null=True)
-
-    class Meta:
-        managed = False
-        db_table = 'contadores_medicos'
-
-
-class Diagnosticos(models.Model):
-    nombre = models.CharField(max_length=3000, blank=True, null=True)
-    estado = models.CharField(max_length=1, blank=True, null=True)
-    id_tipo_diag = models.ForeignKey('TipoDiag', models.DO_NOTHING, db_column='id_tipo_diag', blank=True, null=True)
-    usuario_crea = models.CharField(max_length=15, blank=True, null=True)
-    fec_crea = models.DateTimeField(blank=True, null=True)
-
-    class Meta:
-        managed = False
-        db_table = 'diagnosticos'
-
 
 class DjangoAdminLog(models.Model):
     action_time = models.DateTimeField()
@@ -311,31 +246,18 @@ class DjangoSession(models.Model):
         db_table = 'django_session'
 
 
-
-class Examenes(models.Model):
-    nombre = models.CharField(max_length=3000, blank=True, null=True)
-    estado = models.CharField(max_length=1, blank=True, null=True)
-    id_tipo_exam = models.ForeignKey('TipoExamenes', models.DO_NOTHING, db_column='id_tipo_exam', blank=True, null=True)
-    usuario_crea = models.CharField(max_length=15, blank=True, null=True)
-    fec_crea = models.DateTimeField(blank=True, null=True)
-
-    class Meta:
-        managed = False
-        db_table = 'examenes'
-
-
 class ExamenesDiag(models.Model):
-    id_medico = models.ForeignKey(Consultas, models.DO_NOTHING, db_column='id_medico', primary_key=True)
+    id_medico = models.ForeignKey('Usuario', models.DO_NOTHING, db_column='id_medico')
     id_consulta = models.IntegerField()
-    id_exa = models.ForeignKey(Examenes, models.DO_NOTHING, db_column='id_exa')
     usuario_crea = models.CharField(max_length=15, blank=True, null=True)
     fec_crea = models.DateTimeField(blank=True, null=True)
     resultado = models.CharField(max_length=4000, blank=True, null=True)
+    examen = models.CharField(max_length=4000, blank=True, null=True)
 
     class Meta:
         managed = False
         db_table = 'examenes_diag'
-        unique_together = (('id_medico', 'id_consulta', 'id_exa'),)
+        #unique_together = (('id_medico', 'id_consulta', 'id_exa'),)
 
 class HorariosManager(models.Manager):
     def get_by_natural_key(self, inicio, fin):

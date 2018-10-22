@@ -4,7 +4,7 @@ from django.http import JsonResponse
 import core.generalFunction as gf
 from django.core import serializers
 from django.db.models import Max
-from core.models import Consultas, Referencias, ConsultasMed
+from core.models import Consultas, Referencias, ConsultasMed, ExamenesDiag
 from .forms import ExpedienteForm
 import consulta.service as service
 import logging
@@ -177,3 +177,66 @@ def update_med(request):
     except Exception as inst:
         log.error(inst)
         return JsonResponse({'type': 'error', 'msg': 'Ha ocurrido un error al momento de actualizar el medicamento'})
+
+@login_required
+def find_exa(request, pk):
+    try:
+        if(request.method == 'POST' and request.is_ajax()):
+            exa_list = service.find_exa_query(pk, gf.findUser(request.user.username))
+            return JsonResponse({'exa_list': exa_list, 'type': 'success'})
+    except Exception as inst:
+        log.error(inst)
+        return JsonResponse({'type': 'error', 'msg': 'Ha ocurrido un error al tratar de recuperar los ex&aacute;menes'})
+
+@login_required
+def save_exa(request):
+    try:
+        if(request.method == 'POST' and request.is_ajax()):
+            user = request.user.username
+            id_doctor = gf.findUser(user)
+            pk = request.POST.get('id_consulta')
+            service.save_exa(request.POST.get('exa'), id_doctor, user, pk)
+            exa_list = service.find_exa_query(pk, id_doctor)
+            return JsonResponse({'exa_list': exa_list, 'type': 'success', 'msg': 'Se ha guardado correctamente el ex&aacute;men'})
+    except Exception as inst:
+        log.error(inst)
+        return JsonResponse({'type': 'error', 'msg': 'Ha ocurrido un error al tratar de guardar el ex&aacute;men'})
+
+@login_required
+def delete_exa(request):
+    try:
+        if(request.method == 'POST' and request.is_ajax()):
+            model = get_object_or_404(ExamenesDiag, id = request.POST.get('id_exa'))
+            pk = model.id_consulta
+            model.delete()
+            exa_list = service.find_exa_query(pk, gf.findUser(request.user.username))
+            return JsonResponse({'exa_list': exa_list, 'type': 'success', 'msg': 'Se ha eliminado correctamente el ex&aacute;men'})
+    except Exception as inst:
+        log.error(inst)
+        return JsonResponse({'type': 'error', 'msg': 'Ha ocurrido un error al tratar de eliminar el ex&aacute;men'})
+
+@login_required
+def get_by_key_exa(request):
+    try:
+        if(request.method == 'POST' and request.is_ajax()):
+            pk = request.POST.get('pk')
+            model = get_object_or_404(ExamenesDiag, id = pk)
+            array_result = serializers.serialize('json', [model], ensure_ascii = False)
+            obj = array_result[1:-1]
+            return JsonResponse({'exa_single': obj, 'type': 'success'})
+    except Exception as inst:
+        log.error(inst)
+        return JsonResponse({'type': 'error', 'msg': 'Ha ocurrido un error al tratar de recuperar el ex&aacute;men que desea modificar'})
+
+@login_required
+def update_exa(request):
+    try:
+        if(request.method == 'POST' and request.is_ajax()):
+            model = get_object_or_404(ExamenesDiag, id = request.POST.get('id_exa'))
+            model.examen = request.POST.get('exa')
+            model.save(force_update=True)
+            exa_list = service.find_exa_query(model.id_consulta, gf.findUser(request.user.username))
+            return JsonResponse({'exa_list': exa_list, 'type': 'success', 'msg': 'Se ha actualizado correctamente el ex&aacute;men'})
+    except Exception as inst:
+        log.error(inst)
+        return JsonResponse({'type': 'error', 'msg': 'Ha ocurrido un error al momento de actualizar el ex&aacute;men'})
