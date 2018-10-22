@@ -216,7 +216,7 @@ def delete_exa(request):
         return JsonResponse({'type': 'error', 'msg': 'Ha ocurrido un error al tratar de eliminar el ex&aacute;men'})
 
 @login_required
-def get_by_key_exa(request):
+def get_by_key_exa(request): 
     try:
         if(request.method == 'POST' and request.is_ajax()):
             pk = request.POST.get('pk')
