@@ -568,10 +568,14 @@
         $('#msg_form').hide();
     }
     $(function() {
-        $('#id_problema').val('{{consulta.problema | linebreaks | default_if_none:""}}');
-        $('#id_diagnostico').val('{{consulta.diagnostico | default_if_none:""}}');
-        $('#id_tratamiento').val('{{consulta.tratamiento | default_if_none:""}}');
-        $('#id_recomendacion').val('{{consulta.recomendacion | default_if_none:""}}');
+        var pro = '{{consulta.problema | linebreaksbr | default_if_none:""}}'.replace(/\<br>/gi, '&#13;&#10;');
+        var dia = '{{consulta.diagnostico | linebreaksbr | default_if_none:""}}'.replace(/\<br>/gi, '&#13;&#10;');
+        var tra = '{{consulta.tratamiento | linebreaksbr | default_if_none:""}}'.replace(/\<br>/gi, '&#13;&#10;');
+        var rec = '{{consulta.recomendacion | linebreaksbr | default_if_none:""}}'.replace(/\<br>/gi, '&#13;&#10;');
+        $('#id_problema').html(pro);
+        $('#id_diagnostico').html(dia);
+        $('#id_tratamiento').html(tra);
+        $('#id_recomendacion').html(rec);
         $('#id_talla').val('{{consulta.talla | default_if_none:""}}');
         $('#id_peso').val('{{consulta.peso | default_if_none:""}}');
         $('#id_presion_art').val('{{consulta.presion_art | default_if_none:""}}');

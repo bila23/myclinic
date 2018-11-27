@@ -1,0 +1,238 @@
+{% extends 'base.html' %}
+{% block content %}
+{% load compress %}
+<div class="row">
+	<div class="col titl_w">
+		Consulta de pacientes
+	</div>
+</div>
+<div class="row">
+    <div class="col">
+        <div id="msg"></div>
+    </div>
+</div>
+<style>
+    .lb_v{font-weight:bold}
+</style>
+<form method="POST" id="mf">
+    {% csrf_token %}
+    <div class="row">
+        <div class="col">
+            <input type="search" name="sn" id="sn" class="form-control" placeholder="Ingrese el nombre del paciente que desea buscar" onkeyup="search_table('sn', 'mt', 0)"/>
+        </div>
+    </div>
+    <div class="row" style="margin-top:15px">
+        <div class="col">
+            <div class="table-responsive">
+                <table class="table table-bordered table-hover" id="mt">
+                    <thead>
+                        <tr>
+                            <th scope="col">Nombre</th>
+                            <th scope="col">Fec. Nac.</th>
+                            <th scope="col">Celular</th>
+                            <th scope="col">Correo</th>
+                            <th scope="col">Acci&oacute;n</th>
+                        </tr>
+                    </thead>
+                    <tbody id="tb"></tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+    <div class="modal fade" id="pac_modal_v" tabindex="-1" role="dialog" aria-labelledby="pac_modal_v_tp" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered" role="document">
+            <div class="modal-content">
+                <div class="modal-body">
+                    <table class="table">
+                        <tr>
+                            <td class="lb_v">Nombre:</td>
+                            <td><label id="nombre_v"></label></td>
+                        </tr>
+                        <tr>
+                            <td class="lb_v">Fecha de nacimiento:</td>
+                            <td><label id="fecha_nac_v"></label></td>
+                        </tr>
+                        <tr>
+                            <td class="lb_v">DUI:</td>
+                            <td><label id="dui_v"></label></td>
+                        </tr>
+                        <tr>
+                            <td class="lb_v">Sexo:</td>
+                            <td><label id="sexo_v"></label></td>
+                        </tr>
+                        <tr>
+                            <td class="lb_v">Departamento:</td>
+                            <td><label id="dep_v"></label></td>
+                        </tr>
+                        <tr>
+                            <td class="lb_v">Direcci&oacute;n:</td>
+                            <td><label id="direc_v"></label></td>
+                        </tr>
+                        <tr>
+                            <td class="lb_v">Estado civil:</td>
+                            <td><label id="estc_v"></label></td>
+                        </tr>
+                        <tr>
+                            <td class="lb_v">Telefono casa:</td>
+                            <td><label id="telc_v"></label></td>
+                        </tr>
+                        <tr>
+                            <td class="lb_v">Telefono oficina:</td>
+                            <td><label id="telo_v"></label></td>
+                        </tr>
+                        <tr>
+                            <td class="lb_v">Celular:</td>
+                            <td><label id="cel_v"></label></td>
+                        </tr>
+                        <tr>
+                            <td class="lb_v">Correo:</td>
+                            <td><label id="correo_v"></label></td>
+                        </tr>
+                        <tr>
+                            <td class="lb_v">Aseguradora:</td>
+                            <td><label id="aseg_v"></label></td>
+                        </tr>
+                        <tr>
+                            <td class="lb_v">Profesi&oacute;n:</td>
+                            <td><label id="prof_v"></label></td>
+                        </tr>
+                        <tr>
+                            <td class="lb_v">Empresa:</td>
+                            <td><label id="emp_v"></label></td>
+                        </tr>
+                        <tr>
+                            <td class="lb_v">Direcci&oacute;n de empresa:</td>
+                            <td><label id="demp_v"></label></td>
+                        </tr>
+                    </table>
+                </div>
+                <div style="padding-bottom: 10px;padding-right: 15px;text-align: right;">
+                    <button type="button" class="btn btn-primary" data-dismiss="modal">Cerrar</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</form>
+{% endblock %}
+{% block javascript %}
+{% compress js inline%}
+<script>
+    document.getElementById('sn').focus();
+    function findAll(){
+        $.ajax({
+            type: 'POST',
+            url: '{% url 'paciente_find_all' %}',
+            data: {
+                csrfmiddlewaretoken:'{{ csrf_token }}'
+            },
+            dataType: 'json'
+        }).done(function (data) {
+            if (!$.isEmptyObject(data.msg)) {
+                $('#msg').addClass('alert alert-danger');
+                $('#msg').empty().append(data.msg);
+            }else{
+                row = jQuery.parseJSON(data.pac_list);
+                $('#tb').empty();
+                var tr = ''
+                var size = row.length;
+                if (size > 0) {
+                    for (i = 0; i < size; i++) {
+                        tr += '<tr><td>' + row[i].fields.nombre + '</td><td>' + (row[i].fields.fecha_nac == null ? '' : formatDate(row[i].fields.fecha_nac)) + '</td><td>' + (row[i].fields.celular == null ? '' : row[i].fields.celular) + '</td><td>' + (row[i].fields.correo == null ? '' : row[i].fields.correo) + '</td>';
+                        tr += '<td><a href="javascript:showPac(' + row[i].pk + ')">[Ver]</a> - <a href="">[Modificar]</a> - <a href="">[Eliminar]</a></td></tr>';                            
+                    }
+                } else
+                    tr = '<tr><td colspan="5" class="text-center">No hay pacientes registrados</td></tr>';
+                $('#tb').html(tr);
+            }
+        });
+    }
+
+    $(document).ready(function () {
+        findAll();
+    });
+
+    function showPac(id){
+        $.ajax({
+            type: 'POST',
+            url: '{% url 'get_paciente_by_key' %}',
+            data: {
+                csrfmiddlewaretoken:'{{ csrf_token }}',
+                id_pac: id
+            },
+            dataType: 'json'
+        }).done(function (data) {
+            if(data.type == 'success'){
+                p = jQuery.parseJSON(data.paciente);
+                $('#nombre_v').empty().append(p.fields.nombre);
+                if(p.fields.fecha_nac == null || p.fields.fecha_nac == '')
+                    $('#fecha_nac_v').empty();
+                else
+                    $('#fecha_nac_v').empty().append(formatDate(p.fields.fecha_nac));
+                $('#dui_v').empty().append(p.fields.dui);
+                
+                if(p.fields.sexo == 'M')
+                    $('#sexo_v').empty().append('Mujer');
+                else if(p.fields.sexo == 'H')
+                    $('#sexo_v').empty().append('Hombre');
+
+                if(p.fields.municipio == 'AHC')
+                    $('#dep_v').empty().append('Ahuachap&aacute;n');
+                else if(p.fields.municipio == 'CAB')
+                    $('#dep_v').empty().append('Caba&ntilde;as');
+                else if(p.fields.municipio == 'CHA')
+                    $('#dep_v').empty().append('Chalatenango');
+                else if(p.fields.municipio == 'CUS')
+                    $('#dep_v').empty().append('Cuscatl&aacute;n');
+                else if(p.fields.municipio == 'LIB')
+                    $('#dep_v').empty().append('La Libertad');
+                else if(p.fields.municipio == 'PAZ')
+                    $('#dep_v').empty().append('La paz');
+                else if(p.fields.municipio == 'UNI')
+                    $('#dep_v').empty().append('La Uni&oacute;n');
+                else if(p.fields.municipio == 'MOR')
+                    $('#dep_v').empty().append('Moraz&aacute;n');
+                else if(p.fields.municipio == 'SMI')
+                    $('#dep_v').empty().append('San Miguel');
+                else if(p.fields.municipio == 'SSA')
+                    $('#dep_v').empty().append('San Salvador');
+                else if(p.fields.municipio == 'SVI')
+                    $('#dep_v').empty().append('San Vicente');
+                else if(p.fields.municipio == 'SAN')
+                    $('#dep_v').empty().append('Santa Ana');
+                else if(p.fields.municipio == 'SON')
+                    $('#dep_v').empty().append('Sonsonate');
+                else if(p.fields.municipio == 'USU')
+                    $('#dep_v').empty().append('Usulutan');
+
+                $('#direc_v').empty().append(p.fields.direccion);
+                
+                if(p.fields.estado_civil == 'S')
+                    $('#estc_v').empty().append('Soltero/a');
+                else if(p.fields.estado_civil == 'O')
+                    $('#estc_v').empty().append('Comprometido/a');
+                else if(p.fields.estado_civil == 'C')
+                    $('#estc_v').empty().append('Casado/a');
+                else if(p.fields.estado_civil == 'D')
+                    $('#estc_v').empty().append('Divorciado/a');
+                else if(p.fields.estado_civil == 'V')
+                    $('#estc_v').empty().append('Viudo/a');
+
+                $('#telc_v').empty().append(p.fields.telefono_casa);
+                $('#telo_v').empty().append(p.fields.telefono_oficina);
+                $('#cel_v').empty().append(p.fields.celular);
+                $('#correo_v').empty().append(p.fields.correo);
+                $('#aseg_v').empty().append(p.fields.aseguradora);
+                $('#prof_v').empty().append(p.fields.profesion);
+                $('#emp_v').empty().append(p.fields.empresa);
+                $('#demp_v').empty().append(p.fields.direccion_empresa);
+
+                $('#pac_modal_v').modal();
+            }else if(data.type == 'error'){
+                $('#msg').addClass('alert alert-danger');
+                $('#msg').empty().append(data.msg);
+            }
+        });
+    }
+</script>
+{% endcompress %}
+{% endblock %}
